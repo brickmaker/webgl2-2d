@@ -47,10 +47,25 @@
         return program;
     }
 
+    class Path {
+        constructor() {
+            this.paths = []
+        }
+
+        moveTo(x, y) {
+            this.paths.push([x, y])
+        }
+
+        lineTo(x, y) {
+            this.paths[this.paths.length - 1].push(x, y)
+        }
+    }
 
     class WebGL2RenderingContext2D {
         constructor(ctx) {
             this._gl = ctx
+            this._path = new Path()
+
             // public attributes
             this.canvas = this._gl.canvas
             this.lineWidth = 1
@@ -68,6 +83,7 @@
                     position: {
                         location: gl.getAttribLocation(this.program, 'iPosition'),
                         vertexBuffer: gl.createBuffer(),
+                        indexBuffer: gl.createBuffer()
                     }
                 },
                 uniforms: {}
@@ -76,24 +92,15 @@
 
         }
 
-        // API
-        beginPath() { }
-        moveTo() { }
-        lineTo() { }
-        stroke() {
+        _draw(vertices, indices) {
             const gl = this._gl
+
+            // vertex buffer
             gl.bindBuffer(gl.ARRAY_BUFFER, this.programInfo.attributes.position.vertexBuffer)
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programInfo.attributes.position.indexBuffer)
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-            const positions = [
-                0, 0,
-                1, 0.,
-                0.0, 1.,
-                -1., 0.5,
-            ];
-
-            gl.bufferData(gl.ARRAY_BUFFER,
-                new Float32Array(positions),
-                gl.STATIC_DRAW);
 
             {
                 const numComponents = 2;
@@ -119,13 +126,44 @@
 
             {
                 const offset = 0;
-                const vertexCount = 4;
-                gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+                const vertexCount = 6;
+                // gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
                 // gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
+                gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, offset);
             }
         }
+
+        // API
+        beginPath() { }
+
+        closePath() { }
+
+        moveTo(x, y) {
+            this._path.moveTo(x, y)
+        }
+
+        lineTo(x, y) {
+            this._path.lineTo(x, y)
+        }
+
         bezierCurveTo() {
             console.log('todo')
+        }
+
+        stroke() {
+            const vertices = [
+                0, 0,
+                1, 0.,
+                0.0, 1.,
+                -1., 0.5,
+            ];
+
+            const indices = [
+                0, 1, 2,
+                1, 2, 3
+            ]
+
+            this._draw(vertices, indices)
         }
     }
 
