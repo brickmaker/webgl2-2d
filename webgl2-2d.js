@@ -33,8 +33,9 @@
     `
 
     class Path {
-        constructor() {
+        constructor(ctx) {
             this.paths = []
+            this.ctx = ctx
         }
 
         moveTo(x, y) {
@@ -49,7 +50,7 @@
         getBufferData() {
             let positions = []
             let indices = []
-            const width = 10 // TODO: width
+            const width = this.ctx.lineWidth
             for (const path of this.paths) {
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
                 const pathData = getPathBufferData(path, width, indexOffset)
@@ -70,6 +71,8 @@
                 antialias: true,
             })
             this._renderer.setClearColor(0xffffff)
+            this._scene = new THREE.Scene();
+
             this._width = canvas.width
             this._height = canvas.height
 
@@ -85,13 +88,27 @@
 
         }
 
-        _draw() {
+        _draw(positions, indices) {
+            const geometry = new THREE.BufferGeometry();
+            geometry.setIndex(indices)
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
 
+            const material = new THREE.RawShaderMaterial({
+                uniforms: {},
+                vertexShader: vertShaderStr,
+                fragmentShader: fragShaderStr,
+                // other options...
+            })
+
+            // object and scene
+            const mesh = new THREE.Mesh(geometry, material)
+            this._scene.add(mesh);
+            this._renderer.render(this._scene, this._camera);
         }
 
         // API
         beginPath() {
-            this.path = new Path()
+            this.path = new Path(this)
         }
 
         closePath() { }
@@ -109,57 +126,7 @@
 
         stroke() {
             const { positions, indices } = this.path.getBufferData()
-
-            const geometry = new THREE.BufferGeometry();
-            geometry.setIndex(indices)
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
-
-            const material = new THREE.RawShaderMaterial({
-                uniforms: {},
-                vertexShader: vertShaderStr,
-                fragmentShader: fragShaderStr,
-                // other options...
-            })
-
-            // object and scene
-            const mesh = new THREE.Mesh(geometry, material)
-            const scene = new THREE.Scene();
-            scene.add(mesh);
-
-            this._renderer.render(scene, this._camera);
-
-            /*
-            // data
-            const positions = [
-                -100, -100, 0,
-                100, -100, 0,
-                0, 150, 0,
-            ]
-            const colors = [
-                255, 0, 0, 1,
-                0, 255, 0, 1,
-                0, 0, 255, 1,
-            ]
-
-            // attribute buffers, wrapped in a BufferGeometry
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-            geometry.setAttribute('color', new THREE.Uint8BufferAttribute(colors, 4, true)) // normalized
-
-            const material = new THREE.RawShaderMaterial({
-                uniforms: {},
-                vertexShader: vertShaderStr,
-                fragmentShader: fragShaderStr,
-                // other options...
-            })
-
-            // object and scene
-            const mesh = new THREE.Mesh(geometry, material)
-            const scene = new THREE.Scene();
-            scene.add(mesh);
-
-            this._renderer.render(scene, this._camera);
-            */
+            this._draw(positions, indices)
         }
     }
 

@@ -5,7 +5,6 @@ const ctx2D = canvas2D.getContext('2d')
 const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
 
 function drawLine(ctx) {
-    ctx.lineWidth = 10
 
     ctx.beginPath()
     ctx.moveTo(10, 10)
@@ -24,6 +23,7 @@ function drawLine(ctx) {
     ctx.lineTo(130, 70)
     ctx.lineTo(150, 70)
 
+    ctx.lineWidth = 5 
     ctx.stroke()
 }
 
