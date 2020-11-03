@@ -1,51 +1,36 @@
 ((() => {
-    const vertShader = `#version 300 es
-    in vec2 iPosition;
+    // vertex shader & fragment shader, wrapped in RawShaderMaterial
+    const vertShaderStr = `precision mediump float;
+        precision mediump int;
 
-    void main() {
-        gl_Position = vec4(iPosition, 0., 1.);
-    }
-    `
-    const fragShader = `#version 300 es
-    precision highp float;
-    // uniform vec4 uColor;
-    out vec4 fragmentColor;
+        // three internally bind transform matrix with camera, don't need set it manually
+        uniform mat4 modelViewMatrix; // optional
+        uniform mat4 projectionMatrix; // optional
 
-    void main() {
-        fragmentColor = vec4(1., 0., 0., 1.);
-    }
-    `
+        attribute vec3 position;
+        attribute vec4 color;
 
-    function createShader(gl, shaderStr, type) {
-        const shader = gl.createShader(type)
-        gl.shaderSource(shader, shaderStr)
-        gl.compileShader(shader)
+        varying vec3 vPosition;
+        varying vec4 vColor;
 
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error('Error when compiling the shaders: ' + gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
+        void main()	{
+            vPosition = position;
+            vColor = color;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
+    `
+    const fragShaderStr = `precision mediump float;
+        precision mediump int;
 
-        return shader;
-    }
+        varying vec3 vPosition;
+        varying vec4 vColor;
 
-    function createProgram(gl, vertShaderStr, fragShaderStr) {
-        const vertShader = createShader(gl, vertShaderStr, gl.VERTEX_SHADER)
-        const fragShader = createShader(gl, fragShaderStr, gl.FRAGMENT_SHADER)
-
-        const program = gl.createProgram()
-        gl.attachShader(program, vertShader)
-        gl.attachShader(program, fragShader)
-        gl.linkProgram(program)
-
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            console.error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-            return null;
+        void main()	{
+            // gl_FragColor = vColor;
+            gl_FragColor = vec4(0., 0., 0., 1.); // TODO: color setting
         }
-
-        return program;
-    }
+    `
 
     class Path {
         constructor() {
@@ -53,117 +38,128 @@
         }
 
         moveTo(x, y) {
-            this.paths.push([x, y])
+            this.paths.push([[x, y]])
         }
 
         lineTo(x, y) {
-            this.paths[this.paths.length - 1].push(x, y)
+            const last = this.paths.length - 1
+            this.paths[last].push([x, y])
+        }
+
+        getBufferData() {
+            let positions = []
+            let indices = []
+            const width = 10 // TODO: width
+            for (const path of this.paths) {
+                const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
+                const pathData = getPathBufferData(path, width, indexOffset)
+                positions = positions.concat(pathData.positions)
+                indices = indices.concat(pathData.indices)
+            }
+            return {
+                positions,
+                indices
+            }
         }
     }
 
     class WebGL2RenderingContext2D {
-        constructor(ctx) {
-            this._gl = ctx
-            this._path = new Path()
+        constructor(canvas) {
+            this._renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+            })
+            this._renderer.setClearColor(0xffffff)
+            this._width = canvas.width
+            this._height = canvas.height
+
+            this._camera = new THREE.OrthographicCamera(0, this._width, this._height, 0, -100, 100); // TODO: ortho setting, y flipping
+
+            this._path = null
+
 
             // public attributes
-            this.canvas = this._gl.canvas
+            this.canvas = canvas
+
             this.lineWidth = 1
-
-            const gl = this._gl
-
-
-            this.program = createProgram(gl, vertShader, fragShader)
-
-            // init attributes & uniforms
-
-            this.programInfo = {
-                program: this.program,
-                attributes: {
-                    position: {
-                        location: gl.getAttribLocation(this.program, 'iPosition'),
-                        vertexBuffer: gl.createBuffer(),
-                        indexBuffer: gl.createBuffer()
-                    }
-                },
-                uniforms: {}
-            }
-
 
         }
 
-        _draw(vertices, indices) {
-            const gl = this._gl
+        _draw() {
 
-            // vertex buffer
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.programInfo.attributes.position.vertexBuffer)
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programInfo.attributes.position.indexBuffer)
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-
-            {
-                const numComponents = 2;
-                const type = gl.FLOAT;
-                const normalize = false;
-                const stride = 0;
-                const offset = 0;
-                gl.bindBuffer(gl.ARRAY_BUFFER, this.programInfo.attributes.position.vertexBuffer);
-                gl.vertexAttribPointer(
-                    this.programInfo.attributes.position.location,
-                    numComponents,
-                    type,
-                    normalize,
-                    stride,
-                    offset);
-                gl.enableVertexAttribArray(this.programInfo.attributes.position.location)
-
-            }
-            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-            gl.clearColor(0, 0, 0, 0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.useProgram(this.programInfo.program)
-
-            {
-                const offset = 0;
-                const vertexCount = 6;
-                // gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
-                // gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
-                gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, offset);
-            }
         }
 
         // API
-        beginPath() { }
+        beginPath() {
+            this.path = new Path()
+        }
 
         closePath() { }
 
         moveTo(x, y) {
-            this._path.moveTo(x, y)
+            this.path.moveTo(x, this._height - y)
         }
 
         lineTo(x, y) {
-            this._path.lineTo(x, y)
+            this.path.lineTo(x, this._height - y)
         }
 
         bezierCurveTo() {
-            console.log('todo')
         }
 
         stroke() {
-            const vertices = [
-                0, 0,
-                1, 0.,
-                0.0, 1.,
-                -1., 0.5,
-            ];
+            const { positions, indices } = this.path.getBufferData()
 
-            const indices = [
-                0, 1, 2,
-                1, 2, 3
+            const geometry = new THREE.BufferGeometry();
+            geometry.setIndex(indices)
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
+
+            const material = new THREE.RawShaderMaterial({
+                uniforms: {},
+                vertexShader: vertShaderStr,
+                fragmentShader: fragShaderStr,
+                // other options...
+            })
+
+            // object and scene
+            const mesh = new THREE.Mesh(geometry, material)
+            const scene = new THREE.Scene();
+            scene.add(mesh);
+
+            this._renderer.render(scene, this._camera);
+
+            /*
+            // data
+            const positions = [
+                -100, -100, 0,
+                100, -100, 0,
+                0, 150, 0,
+            ]
+            const colors = [
+                255, 0, 0, 1,
+                0, 255, 0, 1,
+                0, 0, 255, 1,
             ]
 
-            this._draw(vertices, indices)
+            // attribute buffers, wrapped in a BufferGeometry
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+            geometry.setAttribute('color', new THREE.Uint8BufferAttribute(colors, 4, true)) // normalized
+
+            const material = new THREE.RawShaderMaterial({
+                uniforms: {},
+                vertexShader: vertShaderStr,
+                fragmentShader: fragShaderStr,
+                // other options...
+            })
+
+            // object and scene
+            const mesh = new THREE.Mesh(geometry, material)
+            const scene = new THREE.Scene();
+            scene.add(mesh);
+
+            this._renderer.render(scene, this._camera);
+            */
         }
     }
 
@@ -173,7 +169,7 @@
     HTMLCanvasElement.prototype.getContext = function (contextType) {
         if (contextType === 'webgl2-2d') {
             if (!webgl2Context2D) {
-                webgl2Context2D = new WebGL2RenderingContext2D(originGetContext.call(this, 'webgl2'))
+                webgl2Context2D = new WebGL2RenderingContext2D(this) // TODO: consider arguments
             }
             return webgl2Context2D
         } else {
