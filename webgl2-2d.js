@@ -59,7 +59,7 @@ const { Vector4 } = THREE;
             const width = this.ctx.lineWidth
             for (const path of this.paths) {
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
-                const pathData = getPathBufferData(path, width, indexOffset)
+                const pathData = getPathStrokeBufferData(path, width, indexOffset)
                 positions = positions.concat(pathData.positions)
                 indices = indices.concat(pathData.indices)
             }
@@ -73,11 +73,10 @@ const { Vector4 } = THREE;
             let positions = []
             let indices = []
             for (const path of this.paths) {
-                
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
-                const pathData = getPathBufferData(path, width, indexOffset)
-                positions = positions.concat(pathData.positions)
-                indices = indices.concat(pathData.indices)
+                const data = getPathShapeBufferData(path, indexOffset)
+                positions = positions.concat(data.positions)
+                indices = indices.concat(data.indices)
             }
             return {
                 positions,
@@ -108,6 +107,7 @@ const { Vector4 } = THREE;
 
             this.lineWidth = 1
             this._strokeStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
+            this._fillStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
         _draw(positions, indices, color) {
@@ -156,7 +156,17 @@ const { Vector4 } = THREE;
         }
 
         fill() {
-            // this._draw(positions, indices, this._strokeStyle)
+            const { positions, indices } = this.path.getShapeBufferData()
+            this._draw(positions, indices, this._fillStyle)
+        }
+
+        set fillStyle(color) {
+            this._fillStyle = colorParser(color)
+        }
+
+        get fillStyle() {
+            // TODO: format
+            return this._fillStyle
         }
 
         set strokeStyle(color) {
@@ -164,6 +174,7 @@ const { Vector4 } = THREE;
         }
 
         get strokeStyle() {
+            // TODO: format
             return this._strokeStyle
         }
     }

@@ -42,7 +42,7 @@ function computeNormalAndLength(points) {
     }
 }
 
-function getPathBufferData(path, width, indexOffset = 0) {
+function getPathStrokeBufferData(path, width, indexOffset = 0) {
     const result = computeNormalAndLength(path)
 
     const positions = []
@@ -59,6 +59,21 @@ function getPathBufferData(path, width, indexOffset = 0) {
         indices.push(indexOffset + 2 * i + 1, indexOffset + 2 * i + 3, indexOffset + 2 * i + 2)
     }
 
+    return {
+        positions,
+        indices
+    }
+}
+
+function getPathShapeBufferData(path, indexOffset = 0) {
+    const positions = []
+    for (const p of path) {
+        positions.push(p[0], p[1])
+    }
+    const indices = earcut(positions)
+    for (let i = 0; i < indices.length; i++) {
+        indices[i] += indexOffset
+    }
     return {
         positions,
         indices

@@ -40,15 +40,23 @@ function drawLine(ctx) {
 
 function drawShape(ctx) {
     ctx.beginPath();
-    ctx.moveTo(10, 10);
-    ctx.lineTo(110, 10);
-    ctx.lineTo(60, 80);
-
 
     ctx.moveTo(90, 50);
     ctx.lineTo(100, 100);
     ctx.lineTo(120, 80);
 
+    ctx.fillStyle = 'red'
+    ctx.fill();
+
+    ctx.beginPath()
+
+    ctx.moveTo(10, 10);
+    ctx.lineTo(110, 10);
+    ctx.lineTo(50, 40);
+    ctx.lineTo(70, 60);
+    ctx.lineTo(40, 80);
+
+    ctx.fillStyle = 'blue'
     ctx.fill();
 }
 
