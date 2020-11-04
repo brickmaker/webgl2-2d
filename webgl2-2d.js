@@ -85,7 +85,7 @@
             this.canvas = canvas
 
             this.lineWidth = 1
-
+            this._strokeStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
         _draw(positions, indices) {
@@ -127,6 +127,14 @@
         stroke() {
             const { positions, indices } = this.path.getBufferData()
             this._draw(positions, indices)
+        }
+
+        set strokeStyle(color) {
+            this._strokeStyle = colorParser(color)
+        }
+
+        get strokeStyle() {
+            return this._strokeStyle
         }
     }
 
