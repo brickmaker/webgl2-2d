@@ -13,6 +13,11 @@ function drawLine(ctx) {
     ctx.moveTo(30, 10)
     ctx.lineTo(50, 100)
 
+    ctx.lineWidth = 2
+    ctx.strokeStyle = 'blue'
+    ctx.stroke()
+
+    ctx.beginPath()
     // V
     ctx.moveTo(80, 10)
     ctx.lineTo(100, 70)

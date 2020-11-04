@@ -1,3 +1,6 @@
+const { Vector4 } = THREE;
+
+
 ((() => {
     // vertex shader & fragment shader, wrapped in RawShaderMaterial
     const vertShaderStr = `precision mediump float;
@@ -8,14 +11,14 @@
         uniform mat4 projectionMatrix; // optional
 
         attribute vec3 position;
-        attribute vec4 color;
+        // attribute vec4 color;
 
         varying vec3 vPosition;
-        varying vec4 vColor;
+        // varying vec4 vColor;
 
         void main()	{
             vPosition = position;
-            vColor = color;
+            // vColor = color;
 
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
@@ -24,11 +27,14 @@
         precision mediump int;
 
         varying vec3 vPosition;
-        varying vec4 vColor;
+        // varying vec4 vColor;
+
+        uniform vec4 uColor;
 
         void main()	{
             // gl_FragColor = vColor;
-            gl_FragColor = vec4(0., 0., 0., 1.); // TODO: color setting
+            gl_FragColor = uColor;
+            // gl_FragColor = vec4(0., 0., 0., 1.);
         }
     `
 
@@ -88,13 +94,17 @@
             this._strokeStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
-        _draw(positions, indices) {
+        _draw(positions, indices, color) {
             const geometry = new THREE.BufferGeometry();
             geometry.setIndex(indices)
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
 
             const material = new THREE.RawShaderMaterial({
-                uniforms: {},
+                uniforms: {
+                    uColor: {
+                        value: new Vector4(color.r, color.g, color.b, color.a)
+                    }
+                },
                 vertexShader: vertShaderStr,
                 fragmentShader: fragShaderStr,
                 // other options...
@@ -126,7 +136,7 @@
 
         stroke() {
             const { positions, indices } = this.path.getBufferData()
-            this._draw(positions, indices)
+            this._draw(positions, indices, this._strokeStyle)
         }
 
         set strokeStyle(color) {
