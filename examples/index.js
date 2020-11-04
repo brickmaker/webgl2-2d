@@ -4,6 +4,11 @@ const canvasWebGL = document.querySelector('#webgl')
 const ctx2D = canvas2D.getContext('2d')
 const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
 
+function performDraw(draw) {
+    draw(ctx2D)
+    draw(ctxWebGL)
+}
+
 function drawLine(ctx) {
 
     ctx.beginPath()
@@ -33,5 +38,19 @@ function drawLine(ctx) {
     ctx.stroke()
 }
 
-drawLine(ctx2D)
-drawLine(ctxWebGL)
+function drawShape(ctx) {
+    ctx.beginPath();
+    ctx.moveTo(10, 10);
+    ctx.lineTo(110, 10);
+    ctx.lineTo(60, 80);
+
+
+    ctx.moveTo(90, 50);
+    ctx.lineTo(100, 100);
+    ctx.lineTo(120, 80);
+
+    ctx.fill();
+}
+
+// performDraw(drawLine)
+performDraw(drawShape)

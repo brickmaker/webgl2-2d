@@ -53,11 +53,27 @@ const { Vector4 } = THREE;
             this.paths[last].push([x, y])
         }
 
-        getBufferData() {
+        getStrokeBufferData() {
             let positions = []
             let indices = []
             const width = this.ctx.lineWidth
             for (const path of this.paths) {
+                const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
+                const pathData = getPathBufferData(path, width, indexOffset)
+                positions = positions.concat(pathData.positions)
+                indices = indices.concat(pathData.indices)
+            }
+            return {
+                positions,
+                indices
+            }
+        }
+
+        getShapeBufferData() {
+            let positions = []
+            let indices = []
+            for (const path of this.paths) {
+                
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
                 const pathData = getPathBufferData(path, width, indexOffset)
                 positions = positions.concat(pathData.positions)
@@ -135,8 +151,12 @@ const { Vector4 } = THREE;
         }
 
         stroke() {
-            const { positions, indices } = this.path.getBufferData()
+            const { positions, indices } = this.path.getStrokeBufferData()
             this._draw(positions, indices, this._strokeStyle)
+        }
+
+        fill() {
+            // this._draw(positions, indices, this._strokeStyle)
         }
 
         set strokeStyle(color) {
