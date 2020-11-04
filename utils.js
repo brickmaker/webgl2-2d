@@ -64,3 +64,25 @@ function getPathBufferData(path, width, indexOffset = 0) {
         indices
     }
 }
+
+const COLOR_TABLE = {
+    'black': [0, 0, 0, 1],
+    'white': [255, 255, 255, 1],
+    'red': [255, 0, 0, 1],
+    'green': [0, 255, 0, 1],
+    'blue': [0, 0, 255, 1],
+}
+
+function colorParser(color) {
+    if (color in COLOR_TABLE) {
+        const [r, g, b, a] = COLOR_TABLE[color]
+        return {
+            r: r / 255,
+            g: g / 255,
+            b: b / 255,
+            a: a
+        }
+    }
+    // TODO: support all color type
+    console.error('Not supported color yet.')
+}
