@@ -53,13 +53,27 @@ const { Vector4 } = THREE;
             this.paths[last].push([x, y])
         }
 
+        closePath() {
+            const last = this.paths.length - 1
+            const startPoint = [this.paths[last][0][0], this.paths[last][0][1]]
+            const lastIdx = this.paths[last].length - 1
+            const lastPoint = [this.paths[last][lastIdx][0], this.paths[last][lastIdx][1]]
+            if (startPoint[0] === lastPoint[0] && startPoint[1] === lastPoint[1]) {
+                // remove duplicate point
+                this.paths[last].pop()
+            }
+
+            // NOTE: hack, add closed attribute to array
+            this.paths[last].closed = true
+        }
+
         getStrokeBufferData() {
             let positions = []
             let indices = []
             const width = this.ctx.lineWidth
             for (const path of this.paths) {
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
-                const pathData = getPathStrokeBufferData(path, width, indexOffset)
+                const pathData = getPathStrokeBufferData(path, width, path.closed, indexOffset)
                 positions = positions.concat(pathData.positions)
                 indices = indices.concat(pathData.indices)
             }
@@ -137,7 +151,9 @@ const { Vector4 } = THREE;
             this.path = new Path(this)
         }
 
-        closePath() { }
+        closePath() {
+            this.path.closePath()
+        }
 
         moveTo(x, y) {
             this.path.moveTo(x, this._height - y)

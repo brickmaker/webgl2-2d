@@ -32,6 +32,9 @@ function drawLine(ctx) {
     ctx.moveTo(130, 10)
     ctx.lineTo(130, 70)
     ctx.lineTo(150, 70)
+    ctx.lineTo(130, 10)
+    ctx.closePath()
+    // ctx.lineTo(150, 10)
 
     ctx.lineWidth = 5
     ctx.strokeStyle = 'red'
@@ -60,5 +63,5 @@ function drawShape(ctx) {
     ctx.fill();
 }
 
-// performDraw(drawLine)
-performDraw(drawShape)
+performDraw(drawLine)
+// performDraw(drawShape)
