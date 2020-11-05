@@ -91,6 +91,15 @@ function getPathShapeBufferData(path, indexOffset = 0) {
     }
 }
 
+function generateRectBufferData(x, y, width, height) {
+    const positions = [x, y, x + width, y, x + width, y + height, x, y + height]
+    const indices = [0, 1, 2, 0, 2, 3]
+    return {
+        positions,
+        indices
+    }
+}
+
 const COLOR_TABLE = {
     'black': [0, 0, 0, 1],
     'white': [255, 255, 255, 1],

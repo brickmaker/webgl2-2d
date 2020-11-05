@@ -63,5 +63,13 @@ function drawShape(ctx) {
     ctx.fill();
 }
 
-performDraw(drawLine)
+function drawRect(ctx) {
+    ctx.lineWidth = 5;
+    ctx.fillRect(25, 25, 100, 100);
+    ctx.clearRect(40, 40, 70, 70);
+    ctx.strokeRect(50, 50, 50, 50);
+}
+
+// performDraw(drawLine)
 // performDraw(drawShape)
+performDraw(drawRect)

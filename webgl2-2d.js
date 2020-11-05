@@ -109,9 +109,10 @@ const { Vector4 } = THREE;
         constructor(canvas) {
             this._renderer = new THREE.WebGLRenderer({
                 canvas: canvas,
+                alpha: true,
                 antialias: true,
             })
-            this._renderer.setClearColor(0xffffff)
+            this._renderer.setClearColor(0xffffff, 0)
             this._scene = new THREE.Scene();
 
             this._width = canvas.width
@@ -180,6 +181,19 @@ const { Vector4 } = THREE;
         fill() {
             const { positions, indices } = this.path.getShapeBufferData()
             this._draw(positions, indices, this._fillStyle)
+        }
+
+        fillRect(x, y, width, height) {
+            const { positions, indices } = generateRectBufferData(x, y, width, height)
+            this._draw(positions, indices, this._fillStyle)
+        }
+
+        strokeRect(x, y, width, height) {
+
+        }
+
+        clearRect(x, y, width, height) {
+
         }
 
         set fillStyle(color) {
