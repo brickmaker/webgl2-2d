@@ -50,7 +50,13 @@ const { Vector4 } = THREE;
 
         lineTo(x, y) {
             const last = this.paths.length - 1
-            this.paths[last].push([x, y])
+            if (this.paths[last].closed) {
+                // path closed at start point
+                const prevPoint = this.paths[last][0].slice()
+                this.paths.push([prevPoint, [x, y]])
+            } else {
+                this.paths[last].push([x, y])
+            }
         }
 
         closePath() {
