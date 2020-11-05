@@ -44,6 +44,18 @@ const { Vector4 } = THREE;
             this.ctx = ctx
         }
 
+        rect(x, y, width, height) {
+            this.paths = [
+                [
+                    [x, y],
+                    [x + width, y],
+                    [x + width, y + height],
+                    [x, y + height]
+                ]
+            ]
+            this.paths[0].closed = true
+        }
+
         moveTo(x, y) {
             this.paths.push([[x, y]])
         }
@@ -118,7 +130,9 @@ const { Vector4 } = THREE;
             this._width = canvas.width
             this._height = canvas.height
 
-            this._camera = new THREE.OrthographicCamera(0, this._width, this._height, 0, -100, 100); // TODO: ortho setting, y flipping
+            this._camera = new THREE.OrthographicCamera(0, this._width, this._height, 0, -1000, 100000); // TODO: ortho setting, y flipping
+
+            this._zIdx = 0 // NOTE: z offset of geometry, due to three's geometry limitation, not need when using pure WebGL
 
             this._path = null
 
@@ -149,6 +163,8 @@ const { Vector4 } = THREE;
 
             // object and scene
             const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.setZ(this._zIdx)
+            this._zIdx += 1 // update zIdx, near to camera
             this._scene.add(mesh);
             this._renderer.render(this._scene, this._camera);
         }
@@ -184,16 +200,21 @@ const { Vector4 } = THREE;
         }
 
         fillRect(x, y, width, height) {
-            const { positions, indices } = generateRectBufferData(x, y, width, height)
+            const { positions, indices } = generateRectBufferData(x, this._height - y - height, width, height)
             this._draw(positions, indices, this._fillStyle)
         }
 
         strokeRect(x, y, width, height) {
-
+            const rectPath = new Path(this)
+            rectPath.rect(x, this._height - y - height, width, height)
+            const { positions, indices } = rectPath.getStrokeBufferData()
+            this._draw(positions, indices, this._strokeStyle)
         }
 
         clearRect(x, y, width, height) {
-
+            const { positions, indices } = generateRectBufferData(x, this._height - y - height, width, height)
+            const transparent = { r: 0, g: 0, b: 0, a: 0 }
+            this._draw(positions, indices, transparent)
         }
 
         set fillStyle(color) {

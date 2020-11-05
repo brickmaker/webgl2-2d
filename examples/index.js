@@ -66,6 +66,7 @@ function drawShape(ctx) {
 function drawRect(ctx) {
     ctx.lineWidth = 5;
     ctx.fillRect(25, 25, 100, 100);
+    ctx.fillRect(50, 50, 120, 120);
     ctx.clearRect(40, 40, 70, 70);
     ctx.strokeRect(50, 50, 50, 50);
 }
