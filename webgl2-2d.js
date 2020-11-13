@@ -45,15 +45,13 @@ const { Vector4 } = THREE;
         }
 
         rect(x, y, width, height) {
-            this.paths = [
-                [
-                    [x, y],
-                    [x + width, y],
-                    [x + width, y + height],
-                    [x, y + height]
-                ]
-            ]
-            this.paths[0].closed = true
+            this.paths.push([
+                [x, y + height],
+                [x, y],
+                [x + width, y],
+                [x + width, y + height],
+            ])
+            this.paths[this.paths.length - 1].closed = true
         }
 
         moveTo(x, y) {
@@ -179,6 +177,7 @@ const { Vector4 } = THREE;
         }
 
         moveTo(x, y) {
+            // TODO: consider call moveTO without beginPath
             this.path.moveTo(x, this._height - y)
         }
 
@@ -192,6 +191,10 @@ const { Vector4 } = THREE;
         stroke() {
             const { positions, indices } = this.path.getStrokeBufferData()
             this._draw(positions, indices, this._strokeStyle)
+        }
+
+        rect(x, y, width, height) {
+            this.path.rect(x, this._height - y - height, width, height)
         }
 
         fill() {

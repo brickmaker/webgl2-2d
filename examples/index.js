@@ -71,6 +71,18 @@ function drawRect(ctx) {
     ctx.strokeRect(50, 50, 50, 50);
 }
 
+function drawPathRect(ctx) {
+    ctx.lineWidth = 5;
+    ctx.beginPath()
+    ctx.moveTo(10, 10)
+    ctx.lineTo(20, 20)
+    ctx.rect(50, 50, 120, 50)
+    ctx.lineTo(80, 30)
+    ctx.stroke()
+    // ctx.fill()
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
-performDraw(drawRect)
+// performDraw(drawRect)
+performDraw(drawPathRect)
