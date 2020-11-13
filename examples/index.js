@@ -82,7 +82,20 @@ function drawPathRect(ctx) {
     // ctx.fill()
 }
 
+function drawCurve(ctx) {
+    ctx.beginPath()
+    ctx.arc(75, 75, 50, 0, Math.PI * 2, true)
+    ctx.moveTo(110, 75);
+    ctx.arc(75, 75, 35, 0, Math.PI, false);
+
+    ctx.moveTo(40, 60);
+    ctx.bezierCurveTo(60, 40, 80, 80, 110, 60)
+
+    ctx.stroke()
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
-performDraw(drawPathRect)
+// performDraw(drawPathRect)
+performDraw(drawCurve)
