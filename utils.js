@@ -122,3 +122,36 @@ function colorParser(color) {
     // TODO: support all color type
     console.error('Not supported color yet.')
 }
+
+function createArc(x, y, radius, startAngle, endAngle, segments = 30, anticlockwise = false) {
+    startAngle %= 2 * Math.PI
+    endAngle %= 2 * Math.PI
+    // if (!anticlockwise) {
+    // [startAngle, endAngle] = [endAngle, startAngle]
+    // }
+    // if (endAngle <= startAngle) {
+    // endAngle += 2 * Math.PI
+    // }
+    const path = []
+    const epsilon = 0.0001
+
+    if (anticlockwise) {
+        if (endAngle <= startAngle) {
+            endAngle += 2 * Math.PI
+        }
+        for (let angle = startAngle; angle <= endAngle + epsilon; angle += (endAngle - startAngle) / segments) {
+            const px = x + radius * Math.cos(angle)
+            const py = y + radius * Math.sin(angle)
+            path.push([px, py])
+        }
+    } else {
+        startAngle += 2 * Math.PI
+        for (let angle = startAngle; angle >= endAngle - epsilon; angle += (endAngle - startAngle) / segments) {
+            const px = x + radius * Math.cos(angle)
+            const py = y + radius * Math.sin(angle)
+            path.push([px, py])
+        }
+    }
+
+    return path
+}

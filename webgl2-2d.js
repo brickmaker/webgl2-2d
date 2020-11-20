@@ -54,6 +54,15 @@ const { Vector4 } = THREE;
             this.paths[this.paths.length - 1].closed = true
         }
 
+        arc(x, y, radius, startAngle, endAngle, anticlockwise = false) {
+            const arcPath = createArc(x, y, radius, startAngle, endAngle, 30, anticlockwise)
+            const last = this.paths.length - 1
+            if (last >= 0)
+                this.paths[last] = this.paths[last].concat(arcPath)
+            else
+                this.paths.push(arcPath)
+        }
+
         moveTo(x, y) {
             this.paths.push([[x, y]])
         }
@@ -88,6 +97,7 @@ const { Vector4 } = THREE;
             let indices = []
             const width = this.ctx.lineWidth
             for (const path of this.paths) {
+                if (path.length < 2) continue
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
                 const pathData = getPathStrokeBufferData(path, width, path.closed, indexOffset)
                 positions = positions.concat(pathData.positions)
@@ -183,6 +193,13 @@ const { Vector4 } = THREE;
 
         lineTo(x, y) {
             this.path.lineTo(x, this._height - y)
+        }
+
+        arc(x, y, radius, startAngle, endAngle, anticlockwise = false) {
+            this.path.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+        }
+
+        arcTo(x1, y1, x2, y2) {
         }
 
         bezierCurveTo() {
