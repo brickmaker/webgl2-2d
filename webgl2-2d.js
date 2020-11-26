@@ -213,7 +213,8 @@ const { Vector4 } = THREE;
             this.path.arc(x, y, radius, startAngle, endAngle, anticlockwise)
         }
 
-        arcTo(x1, y1, x2, y2) {
+        arcTo(x1, y1, x2, y2, radius) {
+            
         }
 
         bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {

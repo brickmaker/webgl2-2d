@@ -91,6 +91,9 @@ function drawCurve(ctx) {
     ctx.moveTo(40, 60);
     ctx.bezierCurveTo(60, 40, 80, 80, 110, 60)
 
+    ctx.moveTo(180, 50)
+    ctx.arcTo(280, 50, 250, 80, 30)
+
     ctx.stroke()
 }
 
