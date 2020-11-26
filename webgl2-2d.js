@@ -78,6 +78,20 @@ const { Vector4 } = THREE;
             }
         }
 
+        bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+            const last = this.paths.length - 1
+            if (this.paths[last].closed) {
+                // path closed at start point
+                const startPoint = this.paths[last][0].slice()
+                const path = createBezier(startPoint, [cp1x, cp1y], [cp2x, cp2y], [x, y], 30)
+                this.paths.push(path)
+            } else {
+                const startPoint = this.paths[last][this.paths[last].length - 1].slice() // last point
+                const path = createBezier(startPoint, [cp1x, cp1y], [cp2x, cp2y], [x, y], 30)
+                this.paths[last] = this.paths[last].concat(path.splice(1)) // prevent duplicate join point
+            }
+        }
+
         closePath() {
             const last = this.paths.length - 1
             const startPoint = [this.paths[last][0][0], this.paths[last][0][1]]
@@ -202,7 +216,8 @@ const { Vector4 } = THREE;
         arcTo(x1, y1, x2, y2) {
         }
 
-        bezierCurveTo() {
+        bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+            this.path.bezierCurveTo(cp1x, this._height - cp1y, cp2x, this._height - cp2y, x, this._height - y)
         }
 
         stroke() {

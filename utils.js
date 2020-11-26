@@ -150,3 +150,20 @@ function createArc(x, y, radius, startAngle, endAngle, segments = 30, anticlockw
 
     return path
 }
+
+function createBezier(p1, p2, p3, p4, segments = 30) {
+    const path = []
+    for (let t = 0; t <= 1; t += 1 / segments) {
+        const invt = 1 - t
+        const x = p1[0] * (invt ** 3) +
+            p2[0] * 3 * t * (invt ** 2) +
+            p3[0] * 3 * (t ** 2) * invt +
+            p4[0] * (t ** 3)
+        const y = p1[1] * (invt ** 3) +
+            p2[1] * 3 * t * (invt ** 2) +
+            p3[1] * 3 * (t ** 2) * invt +
+            p4[1] * (t ** 3)
+        path.push([x, y])
+    }
+    return path
+}
