@@ -126,12 +126,7 @@ function colorParser(color) {
 function createArc(x, y, radius, startAngle, endAngle, segments = 30, anticlockwise = false) {
     startAngle %= 2 * Math.PI
     endAngle %= 2 * Math.PI
-    // if (!anticlockwise) {
-    // [startAngle, endAngle] = [endAngle, startAngle]
-    // }
-    // if (endAngle <= startAngle) {
-    // endAngle += 2 * Math.PI
-    // }
+
     const path = []
     const epsilon = 0.0001
 
