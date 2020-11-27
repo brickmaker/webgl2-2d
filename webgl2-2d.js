@@ -105,6 +105,19 @@ const { Vector4 } = THREE;
                 this.paths[last] = this.paths[last].concat(path.splice(1)) // prevent duplicate join point
             }
         }
+        quadraticCurveTo(cpx, cpy, x, y) {
+            const last = this.paths.length - 1
+            if (this.paths[last].closed) {
+                // path closed at start point
+                const startPoint = this.paths[last][0].slice()
+                const path = createQuadratic(startPoint, [cpx, cpy], [x, y], 30)
+                this.paths.push(path)
+            } else {
+                const startPoint = this.paths[last][this.paths[last].length - 1].slice() // last point
+                const path = createQuadratic(startPoint, [cpx, cpy], [x, y], 30)
+                this.paths[last] = this.paths[last].concat(path.splice(1)) // prevent duplicate join point
+            }
+        }
 
         closePath() {
             const last = this.paths.length - 1
@@ -236,7 +249,7 @@ const { Vector4 } = THREE;
         }
 
         quadraticCurveTo(cpx, cpy, x, y) {
-
+            this.path.quadraticCurveTo(cpx, this._height - cpy, x, this._height - y)
         }
 
         stroke() {

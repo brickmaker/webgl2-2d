@@ -170,6 +170,21 @@ function createBezier(p1, p2, p3, p4, segments = 30) {
     return path
 }
 
+function createQuadratic(p1, p2, p3, segments = 30) {
+    const path = []
+    for (let t = 0; t <= 1; t += 1 / segments) {
+        const invt = 1 - t
+        const x = p1[0] * (invt ** 2) +
+            p2[0] * 2 * t * invt +
+            p3[0] * (t ** 2)
+        const y = p1[1] * (invt ** 2) +
+            p2[1] * 2 * t * invt +
+            p3[1] * (t ** 2)
+        path.push([x, y])
+    }
+    return path
+}
+
 function createTangentArc(x0, y0, x1, y1, x2, y2, radius) {
     const vec10 = new Vector2(x0 - x1, y0 - y1)
     const vec12 = new Vector2(x2 - x1, y2 - y1)
