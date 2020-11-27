@@ -1,13 +1,10 @@
-function performDraw(draw) {
-    const div = document.createElement('div')
-    const canvas2D = document.createElement('canvas')
-    const canvasWebGL = document.createElement('canvas')
-    div.appendChild(canvas2D)
-    div.appendChild(canvasWebGL)
-    document.body.appendChild(div)
+const canvas2D = document.querySelector('#canvas')
+const canvasWebGL = document.querySelector('#webgl')
 
-    const ctx2D = canvas2D.getContext('2d')
-    const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
+const ctx2D = canvas2D.getContext('2d')
+const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
+
+function performDraw(draw) {
     draw(ctx2D)
     draw(ctxWebGL)
 }
@@ -104,8 +101,8 @@ function drawCurve(ctx) {
     ctx.stroke()
 }
 
-performDraw(drawLine)
-performDraw(drawShape)
-performDraw(drawRect)
-performDraw(drawPathRect)
+// performDraw(drawLine)
+// performDraw(drawShape)
+// performDraw(drawRect)
+// performDraw(drawPathRect)
 performDraw(drawCurve)
