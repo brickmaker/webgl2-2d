@@ -235,6 +235,10 @@ const { Vector4 } = THREE;
             this.path.bezierCurveTo(cp1x, this._height - cp1y, cp2x, this._height - cp2y, x, this._height - y)
         }
 
+        quadraticCurveTo(cpx, cpy, x, y) {
+
+        }
+
         stroke() {
             const { positions, indices } = this.path.getStrokeBufferData()
             this._draw(positions, indices, this._strokeStyle)

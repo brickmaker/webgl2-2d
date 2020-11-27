@@ -84,7 +84,6 @@ function drawPathRect(ctx) {
 
 function drawCurve(ctx) {
     ctx.beginPath()
-    /*
     ctx.arc(75, 75, 50, 0, Math.PI * 2, true)
     ctx.moveTo(110, 75);
     ctx.arc(75, 75, 35, 0, Math.PI, false);
@@ -94,12 +93,10 @@ function drawCurve(ctx) {
 
     ctx.moveTo(180, 50)
     ctx.arcTo(280, 50, 250, 80, 30)
-    */
-    ctx.moveTo(180, 50)
-    ctx.arcTo(280, 50, 230, 80, 20)
 
-    ctx.moveTo(0, 150)
-    ctx.arcTo(100, 140, 100, 100, 100)
+    ctx.moveTo(150, 70)
+    ctx.quadraticCurveTo(250, 80, 150, 90)
+    ctx.quadraticCurveTo(100, 100, 200, 110)
 
     ctx.stroke()
 }
