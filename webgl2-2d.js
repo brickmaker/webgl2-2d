@@ -63,6 +63,20 @@ const { Vector4 } = THREE;
                 this.paths.push(arcPath)
         }
 
+        arcTo(x1, y1, x2, y2, radius) {
+            const last = this.paths.length - 1
+            if (this.paths[last].closed) {
+                // path closed at start point
+                const [x0, y0] = this.paths[last][0]
+                const path = createTangentArc(x0, y0, x1, y1, x2, y2, radius)
+                this.paths.push(path)
+            } else {
+                const [x0, y0] = this.paths[last][this.paths[last].length - 1] // last point
+                const path = createTangentArc(x0, y0, x1, y1, x2, y2, radius)
+                this.paths[last] = this.paths[last].concat(path)
+            }
+        }
+
         moveTo(x, y) {
             this.paths.push([[x, y]])
         }
@@ -210,11 +224,11 @@ const { Vector4 } = THREE;
         }
 
         arc(x, y, radius, startAngle, endAngle, anticlockwise = false) {
-            this.path.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+            this.path.arc(x, this._height - y, radius, -startAngle, -endAngle, anticlockwise)
         }
 
         arcTo(x1, y1, x2, y2, radius) {
-            
+            this.path.arcTo(x1, this._height - y1, x2, this._height - y2, radius)
         }
 
         bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {

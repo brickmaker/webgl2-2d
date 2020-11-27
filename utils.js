@@ -140,7 +140,9 @@ function createArc(x, y, radius, startAngle, endAngle, segments = 30, anticlockw
             path.push([px, py])
         }
     } else {
-        startAngle += 2 * Math.PI
+        if (startAngle <= endAngle) {
+            startAngle += 2 * Math.PI
+        }
         for (let angle = startAngle; angle >= endAngle - epsilon; angle += (endAngle - startAngle) / segments) {
             const px = x + radius * Math.cos(angle)
             const py = y + radius * Math.sin(angle)
@@ -166,4 +168,55 @@ function createBezier(p1, p2, p3, p4, segments = 30) {
         path.push([x, y])
     }
     return path
+}
+
+function createTangentArc(x0, y0, x1, y1, x2, y2, radius) {
+    const vec10 = new Vector2(x0 - x1, y0 - y1)
+    const vec12 = new Vector2(x2 - x1, y2 - y1)
+    vec10.normalize()
+    vec12.normalize()
+
+    const angle = (Math.atan2(vec10.y, vec10.x) - Math.atan2(vec12.y, vec12.x))
+
+    const sideLen = Math.abs(radius / Math.tan(angle / 2))
+
+    const tangentPoint1 = new Vector2(x1 + vec10.x * sideLen, y1 + vec10.y * sideLen)
+    const tangentPoint2 = new Vector2(x1 + vec12.x * sideLen, y1 + vec12.y * sideLen)
+
+    const middleVec = new Vector2().add(vec10).add(vec12).normalize()
+    const middleLen = Math.sqrt(radius * radius + sideLen * sideLen)
+
+    const centerX = x1 + middleVec.x * middleLen
+    const centerY = y1 + middleVec.y * middleLen
+
+    const startAngle = Math.atan2(tangentPoint1.y - centerY, tangentPoint1.x - centerX)
+    const endAngle = Math.atan2(tangentPoint2.y - centerY, tangentPoint2.x - centerX)
+    // NOTE: coordinate difference, use anticlockwise
+    const anticlockwise = vec12.cross(vec10) > 0
+    return createArc(centerX, centerY, radius, startAngle, endAngle, 30, anticlockwise)
+
+    /*
+    //work out tangent points using tan(θ) = opposite / adjacent; angle/2 because hypotenuse is the bisection of a,b
+    var tan_angle_div2 = Math.tan(angle / 2);
+    var adj_l = (radius / tan_angle_div2);
+
+    var tangent_point1 = [x1 + a[0] * adj_l, y1 + a[1] * adj_l];
+    var tangent_point2 = [x1 + b[0] * adj_l, y1 + b[1] * adj_l];
+
+    currentPath.push(tangent_point1[0], tangent_point1[1])
+
+    var bisec = [(a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0];
+    var bisec_l = Math.sqrt(Math.pow(bisec[0], 2) + Math.pow(bisec[1], 2));
+    bisec[0] /= bisec_l; bisec[1] /= bisec_l;
+
+    var hyp_l = Math.sqrt(Math.pow(radius, 2) + Math.pow(adj_l, 2))
+    var center = [x1 + hyp_l * bisec[0], y1 + hyp_l * bisec[1]];
+
+    var startAngle = Math.atan2(tangent_point1[1] - center[1], tangent_point1[0] - center[0]);
+    var endAngle = Math.atan2(tangent_point2[1] - center[1], tangent_point2[0] - center[0]);
+
+    this.arc(center[0], center[1], radius, startAngle, endAngle)
+
+    currentPath.push(tangent_point2[0], tangent_point2[1])
+    */
 }

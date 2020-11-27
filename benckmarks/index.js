@@ -4,6 +4,21 @@ const canvasWebGL = document.querySelector('#webgl')
 const ctx2D = canvas2D.getContext('2d')
 const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
 
+function timeTest(ctx, drawFunc, times) {
+    const start = performance.now()
+    for (let i = 0; i < times; i++) drawFunc(ctx)
+    const end = performance.now()
+    return end - start
+}
+
+function drawRandomLine(ctx) {
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(Math.random() * ctx.canvas.width, Math.random() * ctx.canvas.height)
+    ctx.lineTo(Math.random() * ctx.canvas.width, Math.random() * ctx.canvas.height)
+    ctx.stroke()
+}
+
 function performDraw(draw) {
     draw(ctx2D)
     draw(ctxWebGL)
@@ -108,4 +123,4 @@ function drawCurve(ctx) {
 // performDraw(drawShape)
 // performDraw(drawRect)
 // performDraw(drawPathRect)
-performDraw(drawCurve)
+// performDraw(drawCurve)
