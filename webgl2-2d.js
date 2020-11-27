@@ -308,10 +308,7 @@ const { Vector4 } = THREE;
     let webgl2Context2D = undefined
     HTMLCanvasElement.prototype.getContext = function (contextType) {
         if (contextType === 'webgl2-2d') {
-            if (!webgl2Context2D) {
-                webgl2Context2D = new WebGL2RenderingContext2D(this) // TODO: consider arguments
-            }
-            return webgl2Context2D
+            return new WebGL2RenderingContext2D(this) // TODO: consider arguments
         } else {
             return originGetContext.apply(this, arguments) // TODO: ..
         }
