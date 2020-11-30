@@ -38,6 +38,34 @@ void main() {
 }
 `;
 
+function compileShader(gl, shaderStr, shaderType) {
+    const shader = gl.createShader(shaderType)
+    gl.shaderSource(shader, shaderStr)
+    gl.compileShader(shader)
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        throw new Error('Shader compile failed: ' + gl.getShaderInfoLog(shader))
+    }
+
+    return shader
+}
+
+function createProgram(gl, vertShaderStr, fragShaderStr) {
+    const vertShader = compileShader(gl, vertShaderStr, gl.VERTEX_SHADER)
+    const fragShader = compileShader(gl, fragShaderStr, gl.FRAGMENT_SHADER)
+
+    const program = gl.createProgram()
+
+    gl.attachShader(program, vertShader)
+    gl.attachShader(program, fragShader)
+
+    gl.linkProgram(program)
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        throw new Error(`Could not link shaders: ${gl.getProgramInfoLog(program)}`)
+    }
+
+    return program
+}
+
 class Renderer {
     constructor(canvas) {
         this.gl = canvas.getContext('webgl2')
@@ -46,7 +74,7 @@ class Renderer {
             return
         }
 
-        this.program = webglUtils.createProgramFromSources(this.gl, [vertexShaderSource, fragmentShaderSource])
+        this.program = createProgram(this.gl, vertexShaderSource, fragmentShaderSource)
 
 
         // look up where the vertex data needs to go.
@@ -131,20 +159,3 @@ class Renderer {
         this.gl.drawElements(primitiveType, count, indexType, offset);
     }
 }
-
-const renderer = new Renderer(document.querySelector('#main'))
-
-const vertices = [
-    10, 10,
-    100, 30,
-    10, 60,
-    100, 60
-]
-const indices = [
-    0, 1, 2,   // first triangle
-    2, 1, 3,   // second triangle
-];
-
-const color = [Math.random(), Math.random(), Math.random(), 1]
-
-renderer.draw(vertices, indices, color)
