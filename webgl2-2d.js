@@ -168,12 +168,15 @@ const { Vector4 } = THREE;
 
     class WebGL2RenderingContext2D {
         constructor(canvas) {
+            /*
             this._renderer = new THREE.WebGLRenderer({
                 canvas: canvas,
                 alpha: true,
                 antialias: true,
             })
             this._renderer.setClearColor(0xffffff, 0)
+            */
+            this._renderer = new Renderer(canvas)
             this._scene = new THREE.Scene();
 
             this._width = canvas.width
@@ -195,6 +198,8 @@ const { Vector4 } = THREE;
         }
 
         _draw(positions, indices, color) {
+            this._renderer.draw(positions, indices, [color.r, color.g, color.b, color.a])
+            return
             const geometry = new THREE.BufferGeometry();
             geometry.setIndex(indices)
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
