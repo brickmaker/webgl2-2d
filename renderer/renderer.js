@@ -68,7 +68,9 @@ function createProgram(gl, vertShaderStr, fragShaderStr) {
 
 class Renderer {
     constructor(canvas) {
-        this.gl = canvas.getContext('webgl2')
+        this.gl = canvas.getContext('webgl2', {
+            preserveDrawingBuffer: true
+        })
         if (!this.gl) {
             console.error('WebGL2 not supported.')
             return

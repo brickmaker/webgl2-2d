@@ -102,7 +102,7 @@ function drawCurve(ctx) {
 }
 
 // performDraw(drawLine)
-// performDraw(drawShape)
+performDraw(drawShape)
 // performDraw(drawRect)
 // performDraw(drawPathRect)
-performDraw(drawCurve)
+// performDraw(drawCurve)
