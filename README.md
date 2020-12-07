@@ -14,12 +14,12 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
     - [ ] State
         - [ ] save()
         - [ ] restore()
-    - [ ] Transformations
-        - [ ] scale()
-        - [ ] rotate()
-        - [ ] translate()
-        - [ ] transform()
-        - [ ] setTransform()
+    - [x] Transformations
+        - [x] scale()
+        - [x] rotate()
+        - [x] translate()
+        - [x] transform()
+        - [x] setTransform()
     - [ ] Compositing
         - [ ] globalAlpha
         - [ ] globalCompositeOperation

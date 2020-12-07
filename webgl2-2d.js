@@ -243,7 +243,9 @@
                 0, 0, 1, 0,
                 e, f, 0, 1
             ]
-            this._transform = mat4Multiply(newMat, this._transform)
+            // NOTE: post-multiply!!
+            // it's not directly transform shapes, it's canvas!
+            this._transform = mat4Multiply(this._transform, newMat)
             this._renderer.setTransform(this._transform)
         }
 
@@ -256,6 +258,25 @@
                 e, f, 0, 1
             ]
             this._renderer.setTransform(this._transform)
+        }
+
+        translate(x, y) {
+            this.transform(1, 0, 0, 1, x, y)
+        }
+
+        rotate(angle) {
+            this.transform(
+                Math.cos(angle),
+                Math.sin(angle),
+                -Math.sin(angle),
+                Math.cos(angle),
+                0,
+                0
+            )
+        }
+
+        scale(x, y) {
+            this.transform(x, 0, 0, y, 0, 0)
         }
 
 
