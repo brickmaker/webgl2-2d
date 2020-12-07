@@ -130,7 +130,7 @@ function createArc(x, y, radius, startAngle, endAngle, segments = 30, anticlockw
     const path = []
     const epsilon = 0.0001
 
-    if (anticlockwise) {
+    if (!anticlockwise) {
         if (endAngle <= startAngle) {
             endAngle += 2 * Math.PI
         }
@@ -206,32 +206,7 @@ function createTangentArc(x0, y0, x1, y1, x2, y2, radius) {
 
     const startAngle = Math.atan2(tangentPoint1.y - centerY, tangentPoint1.x - centerX)
     const endAngle = Math.atan2(tangentPoint2.y - centerY, tangentPoint2.x - centerX)
-    // NOTE: coordinate difference, use anticlockwise
-    const anticlockwise = vec12.cross(vec10) > 0
+    // TODO: arc direction, review
+    const anticlockwise = vec12.cross(vec10) < 0
     return createArc(centerX, centerY, radius, startAngle, endAngle, 30, anticlockwise)
-
-    /*
-    //work out tangent points using tan(θ) = opposite / adjacent; angle/2 because hypotenuse is the bisection of a,b
-    var tan_angle_div2 = Math.tan(angle / 2);
-    var adj_l = (radius / tan_angle_div2);
-
-    var tangent_point1 = [x1 + a[0] * adj_l, y1 + a[1] * adj_l];
-    var tangent_point2 = [x1 + b[0] * adj_l, y1 + b[1] * adj_l];
-
-    currentPath.push(tangent_point1[0], tangent_point1[1])
-
-    var bisec = [(a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0];
-    var bisec_l = Math.sqrt(Math.pow(bisec[0], 2) + Math.pow(bisec[1], 2));
-    bisec[0] /= bisec_l; bisec[1] /= bisec_l;
-
-    var hyp_l = Math.sqrt(Math.pow(radius, 2) + Math.pow(adj_l, 2))
-    var center = [x1 + hyp_l * bisec[0], y1 + hyp_l * bisec[1]];
-
-    var startAngle = Math.atan2(tangent_point1[1] - center[1], tangent_point1[0] - center[0]);
-    var endAngle = Math.atan2(tangent_point2[1] - center[1], tangent_point2[0] - center[0]);
-
-    this.arc(center[0], center[1], radius, startAngle, endAngle)
-
-    currentPath.push(tangent_point2[0], tangent_point2[1])
-    */
 }

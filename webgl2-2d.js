@@ -7,10 +7,10 @@
 
         rect(x, y, width, height) {
             this.paths.push([
-                [x, y + height],
                 [x, y],
-                [x + width, y],
+                [x, y + height],
                 [x + width, y + height],
+                [x + width, y],
             ])
             this.paths[this.paths.length - 1].closed = true
         }
@@ -178,28 +178,28 @@
         }
 
         moveTo(x, y) {
-            // TODO: consider call moveTO without beginPath
-            this.path.moveTo(x, this._height - y)
+            // TODO: consider call moveTo without beginPath
+            this.path.moveTo(x, y)
         }
 
         lineTo(x, y) {
-            this.path.lineTo(x, this._height - y)
+            this.path.lineTo(x, y)
         }
 
         arc(x, y, radius, startAngle, endAngle, anticlockwise = false) {
-            this.path.arc(x, this._height - y, radius, -startAngle, -endAngle, anticlockwise)
+            this.path.arc(x, y, radius, startAngle, endAngle, anticlockwise)
         }
 
         arcTo(x1, y1, x2, y2, radius) {
-            this.path.arcTo(x1, this._height - y1, x2, this._height - y2, radius)
+            this.path.arcTo(x1, y1, x2, y2, radius)
         }
 
         bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
-            this.path.bezierCurveTo(cp1x, this._height - cp1y, cp2x, this._height - cp2y, x, this._height - y)
+            this.path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
         }
 
         quadraticCurveTo(cpx, cpy, x, y) {
-            this.path.quadraticCurveTo(cpx, this._height - cpy, x, this._height - y)
+            this.path.quadraticCurveTo(cpx, cpy, x, y)
         }
 
         stroke() {
@@ -208,7 +208,7 @@
         }
 
         rect(x, y, width, height) {
-            this.path.rect(x, this._height - y - height, width, height)
+            this.path.rect(x, y, width, height)
         }
 
         fill() {
@@ -217,7 +217,7 @@
         }
 
         fillRect(x, y, width, height) {
-            const { positions, indices } = generateRectBufferData(x, this._height - y - height, width, height)
+            const { positions, indices } = generateRectBufferData(x, y, width, height)
             this._draw(positions, indices, this._fillStyle)
         }
 
@@ -229,7 +229,7 @@
         }
 
         clearRect(x, y, width, height) {
-            const { positions, indices } = generateRectBufferData(x, this._height - y - height, width, height)
+            const { positions, indices } = generateRectBufferData(x, y, width, height)
             const transparent = { r: 0, g: 0, b: 0, a: 0 }
             this._draw(positions, indices, transparent)
         }
