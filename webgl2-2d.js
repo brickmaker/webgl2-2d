@@ -2,42 +2,6 @@ const { Vector4 } = THREE;
 
 
 ((() => {
-    // vertex shader & fragment shader, wrapped in RawShaderMaterial
-    const vertShaderStr = `precision mediump float;
-        precision mediump int;
-
-        // three internally bind transform matrix with camera, don't need set it manually
-        uniform mat4 modelViewMatrix; // optional
-        uniform mat4 projectionMatrix; // optional
-
-        attribute vec3 position;
-        // attribute vec4 color;
-
-        varying vec3 vPosition;
-        // varying vec4 vColor;
-
-        void main()	{
-            vPosition = position;
-            // vColor = color;
-
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-        }
-    `
-    const fragShaderStr = `precision mediump float;
-        precision mediump int;
-
-        varying vec3 vPosition;
-        // varying vec4 vColor;
-
-        uniform vec4 uColor;
-
-        void main()	{
-            // gl_FragColor = vColor;
-            gl_FragColor = uColor;
-            // gl_FragColor = vec4(0., 0., 0., 1.);
-        }
-    `
-
     class Path {
         constructor(ctx) {
             this.paths = []
@@ -168,14 +132,6 @@ const { Vector4 } = THREE;
 
     class WebGL2RenderingContext2D {
         constructor(canvas) {
-            /*
-            this._renderer = new THREE.WebGLRenderer({
-                canvas: canvas,
-                alpha: true,
-                antialias: true,
-            })
-            this._renderer.setClearColor(0xffffff, 0)
-            */
             this._renderer = new Renderer(canvas)
             this._scene = new THREE.Scene();
 
@@ -199,28 +155,6 @@ const { Vector4 } = THREE;
 
         _draw(positions, indices, color) {
             this._renderer.draw(positions, indices, [color.r, color.g, color.b, color.a])
-            return
-            const geometry = new THREE.BufferGeometry();
-            geometry.setIndex(indices)
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 2))
-
-            const material = new THREE.RawShaderMaterial({
-                uniforms: {
-                    uColor: {
-                        value: new Vector4(color.r, color.g, color.b, color.a)
-                    }
-                },
-                vertexShader: vertShaderStr,
-                fragmentShader: fragShaderStr,
-                // other options...
-            })
-
-            // object and scene
-            const mesh = new THREE.Mesh(geometry, material)
-            mesh.position.setZ(this._zIdx)
-            this._zIdx += 1 // update zIdx, near to camera
-            this._scene.add(mesh);
-            this._renderer.render(this._scene, this._camera);
         }
 
         // API
