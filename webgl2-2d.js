@@ -310,7 +310,6 @@ const { Vector4 } = THREE;
 
     // mixin getContext
     const originGetContext = HTMLCanvasElement.prototype.getContext
-    let webgl2Context2D = undefined
     HTMLCanvasElement.prototype.getContext = function (contextType) {
         if (contextType === 'webgl2-2d') {
             return new WebGL2RenderingContext2D(this) // TODO: consider arguments
