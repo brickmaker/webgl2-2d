@@ -101,8 +101,22 @@ function drawCurve(ctx) {
     ctx.stroke()
 }
 
+function drawWithTransform(ctx) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, 250, 100)
+
+    ctx.transform(1, 0.5, -0.5, 1, 30, 10);
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, 250, 100);
+
+    ctx.transform(1, 0.5, -0.5, 1, 30, 10);
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, 250, 100);
+}
+
 // performDraw(drawLine)
-performDraw(drawShape)
+// performDraw(drawShape)
 // performDraw(drawRect)
 // performDraw(drawPathRect)
 // performDraw(drawCurve)
+performDraw(drawWithTransform)
