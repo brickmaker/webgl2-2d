@@ -237,7 +237,14 @@
 
         // Transformations
         transform(a, b, c, d, e, f) {
-
+            const newMat = [
+                a, b, 0, 0,
+                c, d, 0, 0,
+                0, 0, 1, 0,
+                e, f, 0, 1
+            ]
+            this._transform = mat4Multiply(newMat, this._transform)
+            this._renderer.setTransform(this._transform)
         }
 
 

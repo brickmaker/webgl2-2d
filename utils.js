@@ -5,6 +5,12 @@ function getVector2Normal(vec1, vec2) {
     return new Vector2(-vec.y, vec.x).normalize()
 }
 
+function mat4Multiply(mat1, mat2) {
+    const m1 = new Matrix4().fromArray(mat1)
+    const m2 = new Matrix4().fromArray(mat2)
+    return m1.multiply(m2).elements
+}
+
 function computeNormalAndLength(points, isClosed = false) {
     if (!points || points.lengths < 2) {
         return {
