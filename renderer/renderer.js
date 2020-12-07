@@ -7,11 +7,15 @@ in vec2 a_position;
 // Used to pass in the resolution of the canvas
 uniform vec2 u_resolution;
 
+uniform mat4 u_transform;
+
 // all shaders have a main function
 void main() {
 
+  vec4 pos = u_transform * vec4(a_position, 0., 1.);
+
   // convert the position from pixels to 0.0 to 1.0
-  vec2 zeroToOne = a_position / u_resolution;
+  vec2 zeroToOne = pos.xy / u_resolution;
 
   // convert from 0->1 to 0->2
   vec2 zeroToTwo = zeroToOne * 2.0;
@@ -84,6 +88,7 @@ class Renderer {
 
         // look up uniform locations
         this.resolutionUniformLocation = this.gl.getUniformLocation(this.program, "u_resolution");
+        this.transformUniformLocation = this.gl.getUniformLocation(this.program, "u_transform");
         this.colorLocation = this.gl.getUniformLocation(this.program, "u_color");
 
         // Create a buffer
@@ -134,6 +139,18 @@ class Renderer {
         // pixels to clipspace in the shader
         this.gl.uniform2f(this.resolutionUniformLocation, this.gl.canvas.width, this.gl.canvas.height);
 
+        this.transform = [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        ]
+        this.gl.uniformMatrix4fv(this.transformUniformLocation, false, this.transform)
+    }
+
+    setTransform(transform) {
+        this.transform = transform.slice()
+        this.gl.uniformMatrix4fv(this.transformUniformLocation, false, this.transform)
     }
 
     draw(vertices, indices, color) {

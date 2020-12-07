@@ -1,6 +1,3 @@
-const { Vector4 } = THREE;
-
-
 ((() => {
     class Path {
         constructor(ctx) {
@@ -138,12 +135,26 @@ const { Vector4 } = THREE;
             this._width = canvas.width
             this._height = canvas.height
 
-            this._camera = new THREE.OrthographicCamera(0, this._width, this._height, 0, -1000, 100000); // TODO: ortho setting, y flipping
-
             this._zIdx = 0 // NOTE: z offset of geometry, due to three's geometry limitation, not need when using pure WebGL
 
             this._path = null
 
+            /*
+            consider WebGL's uniforms
+            4d, column major
+            [
+                a, b, 0, 0,
+                c, d, 0, 0,
+                0, 0, 1, 0,
+                e, f, 0, 1,
+            ]
+            */
+            this._transform = [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
+            ]
 
             // public attributes
             this.canvas = canvas
@@ -222,6 +233,24 @@ const { Vector4 } = THREE;
             const transparent = { r: 0, g: 0, b: 0, a: 0 }
             this._draw(positions, indices, transparent)
         }
+
+
+        // Transformations
+        transform(a, b, c, d, e, f) {
+
+        }
+
+
+        setTransform(a, b, c, d, e, f) {
+            this._transform = [
+                a, b, 0, 0,
+                c, d, 0, 0,
+                0, 0, 1, 0,
+                e, f, 0, 1
+            ]
+            this._renderer.setTransform(this._transform)
+        }
+
 
         set fillStyle(color) {
             this._fillStyle = colorParser(color)

@@ -102,9 +102,14 @@ function drawCurve(ctx) {
 }
 
 function drawWithTransform(ctx) {
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 250, 100)
+    // ctx.fillStyle = "red";
+    // ctx.fillRect(0, 0, 250, 100)
 
+    // ctx.setTransform(1, 0.5, -0.5, 1, 30, 10);
+    ctx.setTransform(1, 0, 0, 1, 30, 10);
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, 250, 100);
+    /*
     ctx.transform(1, 0.5, -0.5, 1, 30, 10);
     ctx.fillStyle = "green";
     ctx.fillRect(0, 0, 250, 100);
@@ -112,6 +117,7 @@ function drawWithTransform(ctx) {
     ctx.transform(1, 0.5, -0.5, 1, 30, 10);
     ctx.fillStyle = "blue";
     ctx.fillRect(0, 0, 250, 100);
+    */
 }
 
 // performDraw(drawLine)
