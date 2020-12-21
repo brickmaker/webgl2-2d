@@ -130,10 +130,26 @@ function saveAndRestore(ctx) {
     ctx.fillRect(150, 40, 100, 100);
 }
 
+function pointInPath(ctx) {
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(20, 0)
+    ctx.lineTo(100, 100)
+    ctx.arc(50, 50, 50 * Math.sqrt(2), Math.PI / 4, Math.PI * 3 / 4)
+    ctx.lineTo(80, 0)
+    ctx.lineTo(100, 0)
+    ctx.lineTo(20, 100)
+    ctx.arc(50, 70, 30 * Math.sqrt(2), Math.PI * 3 / 4, Math.PI / 4, true)
+    ctx.closePath()
+
+    ctx.stroke()
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
 // performDraw(drawPathRect)
 // performDraw(drawCurve)
 // performDraw(drawWithTransform)
-performDraw(saveAndRestore)
+// performDraw(saveAndRestore)
+performDraw(pointInPath)
