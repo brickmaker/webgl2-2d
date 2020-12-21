@@ -156,6 +156,8 @@
                 0, 0, 0, 1,
             ]
 
+            this._stateStack = []
+
             // public attributes
             this.canvas = canvas
 
@@ -277,6 +279,39 @@
 
         scale(x, y) {
             this.transform(x, 0, 0, y, 0, 0)
+        }
+
+        // save & restore states
+        /*
+            Each context maintains a stack of drawing states. Drawing states consist of:
+
+            * The current transformation matrix.
+            * The current clipping region.
+            * The current values of the following attributes: strokeStyle, fillStyle, globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, globalCompositeOperation, font, textAlign, textBaseline.
+
+            The current path and the current bitmap are not part of the drawing state. The current path is persistent, and can only be reset using the beginPath() method. The current bitmap is a property of the canvas, not the context.
+        */
+
+        save() {
+            this._stateStack.push({
+                transform: this._transform.slice(),
+
+                strokeStyle: this._strokeStyle,
+                fillStyle: this._fillStyle,
+                lineWidth: this.lineWidth
+            })
+        }
+
+        restore() {
+            if (this._stateStack.length === 0) return;
+            const state = this._stateStack.pop()
+
+            this._transform = state.transform
+            this._renderer.setTransform(this._transform)
+
+            this._strokeStyle = state.strokeStyle
+            this._fillStyle = state.fillStyle
+            this.lineWidth = state.lineWidth
         }
 
 

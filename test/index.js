@@ -114,9 +114,26 @@ function drawWithTransform(ctx) {
     ctx.fillRect(0, 0, 250, 100);
 }
 
+function saveAndRestore(ctx) {
+    // Save the default state
+    ctx.save();
+
+    ctx.fillStyle = 'green';
+
+    ctx.scale(0.7, 0.2);
+
+    ctx.fillRect(10, 10, 100, 100);
+
+    // Restore the default state
+    ctx.restore();
+
+    ctx.fillRect(150, 40, 100, 100);
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
 // performDraw(drawPathRect)
 // performDraw(drawCurve)
-performDraw(drawWithTransform)
+// performDraw(drawWithTransform)
+performDraw(saveAndRestore)

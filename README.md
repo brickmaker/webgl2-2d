@@ -5,15 +5,15 @@ Canvas API implementation in WebGL2
 
 refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
 
-- [ ] HTMLCanvasElement
-    - [ ] width/height
+- [x] HTMLCanvasElement
+    - [x] width/height (TODO: set behavior not same)
     - [x] getContext('webgl2-2d'): attributes not supported
-    - [x] toDataURL(): parameters not supported
-- [ ] CanvasRenderingContext2D
+    - [x] toDataURL(): (TODO: parameters not supported)
+- [x] CanvasRenderingContext2D
     - [x] canvas
-    - [ ] State
-        - [ ] save()
-        - [ ] restore()
+    - [x] State
+        - [x] save()
+        - [x] restore()
     - [x] Transformations
         - [x] scale()
         - [x] rotate()
