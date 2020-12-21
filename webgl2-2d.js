@@ -19,7 +19,7 @@
             const arcPath = createArc(x, y, radius, startAngle, endAngle, 30, anticlockwise)
             const last = this.paths.length - 1
             if (last >= 0)
-                this.paths[last] = this.paths[last].concat(arcPath)
+                this.paths[last] = this.paths[last].concat(arcPath.slice(1)) // concat, remove duplicate arc start point
             else
                 this.paths.push(arcPath)
         }
