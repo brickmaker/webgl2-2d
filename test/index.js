@@ -143,6 +143,24 @@ function pointInPath(ctx) {
     ctx.closePath()
 
     ctx.stroke()
+
+    const points = [
+        [20, 10], [50, 10], [80, 10], [110, 10],
+        [30, 50], [50, 50], [80, 50],
+        [50, 40],
+        [50, 70],
+        [50, 110], [50, 120]
+    ]
+
+    for (const [x, y] of points) {
+        if (ctx.isPointInPath(x, y)) {
+            ctx.fillStyle = 'green'
+        } else {
+            ctx.fillStyle = 'red'
+        }
+        const size = 5
+        ctx.fillRect(x - size / 2, y - size / 2, size, size)
+    }
 }
 
 // performDraw(drawLine)
