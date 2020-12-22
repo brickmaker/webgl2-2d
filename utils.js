@@ -216,3 +216,35 @@ function createTangentArc(x0, y0, x1, y1, x2, y2, radius) {
     const anticlockwise = vec12.cross(vec10) < 0
     return createArc(centerX, centerY, radius, startAngle, endAngle, 30, anticlockwise)
 }
+
+function pointInPolygon(points, x, y, fillRule) {
+    let crossCnt = 0
+    let noneZeroValue = 0
+    for (let i = 0; i < points.length; i++) {
+        const [x1, y1] = points[i]
+        const [x2, y2] = points[(i + 1) % points.length]
+        if (y1 == y2) continue // discard parallel edge
+        if ((y1 - y) * (y2 - y) <= 0) {
+            let xMid = x1 + (x2 - x1) * (y - y1) / (y2 - y1) // middle x pos for line p1 - p2
+            if (xMid > x) {
+                // use pos-x ray casting
+                // get valid path
+                if (y === y1) {
+                    // ray intersect vertex, check cross or touch
+                    const y0 = points[(i + points.length - 1) % points.length]
+                    if ((y0 - y) * (y2 - y) <= 0) {
+                        // two edge at differenct side, not cnt
+                        continue
+                    }
+                }
+                crossCnt += 1
+                noneZeroValue += y2 > y1 ? 1 : -1
+            }
+        }
+    }
+    if (fillRule === 'evenodd') {
+        return crossCnt % 2 != 0
+    } else {
+        return noneZeroValue != 0
+    }
+}

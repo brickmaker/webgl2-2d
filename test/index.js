@@ -153,7 +153,7 @@ function pointInPath(ctx) {
     ]
 
     for (const [x, y] of points) {
-        if (ctx.isPointInPath(x, y)) {
+        if (ctx.isPointInPath(x, y, 'nonzero')) {
             ctx.fillStyle = 'green'
         } else {
             ctx.fillStyle = 'red'

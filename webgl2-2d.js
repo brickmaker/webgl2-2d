@@ -314,6 +314,24 @@
             this.lineWidth = state.lineWidth
         }
 
+        isPointInPath(x, y, fillRule) {
+            // TODO: support pass path: isPointInPath(path, x, y, fillRule)
+            if (this.path.paths.length === 0)
+                return false
+            const currPath = this.path.paths[this.path.paths.length - 1].slice()
+            if (currPath.length === 0)
+                return false
+
+            // close path
+            const startPoint = [currPath[0][0], currPath[0][1]]
+            const lastIdx = currPath.length - 1
+            const lastPoint = [currPath[lastIdx][0], currPath[lastIdx][1]]
+            if (startPoint[0] === lastPoint[0] && startPoint[1] === lastPoint[1]) {
+                currPath.pop()
+            }
+            return pointInPolygon(currPath, x, y, fillRule)
+        }
+
 
         set fillStyle(color) {
             this._fillStyle = colorParser(color)

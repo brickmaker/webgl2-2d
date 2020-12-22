@@ -133,6 +133,40 @@ function saveAndRestore(ctx) {
     ctx.fillRect(150, 40, 100, 100);
 }
 
+function pointInPath(ctx) {
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(20, 0)
+    ctx.lineTo(100, 100)
+    ctx.arc(50, 50, 50 * Math.sqrt(2), Math.PI / 4, Math.PI * 3 / 4)
+    ctx.lineTo(80, 0)
+    ctx.lineTo(100, 0)
+    ctx.lineTo(20, 100)
+    ctx.arc(50, 70, 30 * Math.sqrt(2), Math.PI * 3 / 4, Math.PI / 4, true)
+    ctx.closePath()
+
+    ctx.stroke()
+
+    const points = [
+        [20, 10], [50, 10], [80, 10], [110, 10],
+        [30, 50], [50, 50], [80, 50],
+        [50, 40],
+        [50, 70],
+        [50, 110], [50, 120]
+    ]
+
+    for (const [x, y] of points) {
+        if (ctx.isPointInPath(x, y, 'nonzero')) {
+            ctx.fillStyle = 'green'
+        } else {
+            ctx.fillStyle = 'red'
+        }
+        const size = 5
+        ctx.fillRect(x - size / 2, y - size / 2, size, size)
+    }
+}
+
+
 performDraw(drawLine)
 performDraw(drawShape)
 performDraw(drawRect)
@@ -140,3 +174,4 @@ performDraw(drawPathRect)
 performDraw(drawCurve)
 performDraw(drawWithTransform)
 performDraw(saveAndRestore)
+performDraw(pointInPath)
