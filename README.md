@@ -55,7 +55,7 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [x] arc()
         - [x] arcTo()
         - [ ] clip()
-        - [ ] isPointInPath()
+        - [x] isPointInPath() (TODO: specify path support)
     - [ ] Text
         - [ ] font
         - [ ] textAlign
