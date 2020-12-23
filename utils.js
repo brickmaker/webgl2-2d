@@ -11,51 +11,44 @@ function mat4Multiply(mat1, mat2) {
     return m1.multiply(m2).elements
 }
 
-function computeNormalAndLength(points, isClosed = false) {
+function computeNormalAndLength(points) {
     if (!points || points.lengths < 2) {
         return {
             points,
-            normals: null,
-            lengths: null
+            miterNormals: null,
+            lengths: null,
+            normal: null
         }
     }
 
     const N = points.length
-    const normals = Array(N).fill().map(() => [0, 0])
+    const miterNormals = Array(N).fill().map(() => [0, 0])
     const lengths = Array(N).fill(1)
 
-    const rawNormals = []
+    const normals = []
     for (let i = 0; i < N - 1; i++) {
-        rawNormals.push(getVector2Normal(new Vector2(points[i][0], points[i][1]), new Vector2(points[i + 1][0], points[i + 1][1])))
+        normals.push(getVector2Normal(new Vector2(points[i][0], points[i][1]), new Vector2(points[i + 1][0], points[i + 1][1])))
     }
-    // if closed, we need this segement's normal
-    rawNormals.push(getVector2Normal(new Vector2(points[N - 1][0], points[N - 1][1]), new Vector2(points[0][0], points[0][1])))
+    normals.push(getVector2Normal(new Vector2(points[N - 1][0], points[N - 1][1]), new Vector2(points[0][0], points[0][1])))
 
     for (let i = 0; i < N; i++) {
-        const va = rawNormals[(i - 1 + N) % N]
-        const vb = rawNormals[i % N]
+        const va = normals[(i - 1 + N) % N]
+        const vb = normals[i % N]
         const normal = new Vector2().addVectors(va, vb).normalize()
-        normals[i] = normal.toArray()
+        miterNormals[i] = normal.toArray()
         lengths[i] = 1 / normal.dot(va)
-    }
-
-    if (!isClosed) {
-        // reset normal, not mitter
-        normals[0] = rawNormals[0].toArray()
-        lengths[0] = 1
-        normals[N - 1] = rawNormals[N - 2].toArray() // NOTE: not use current raw normal, use previous instead
-        lengths[N - 1] = 1
     }
 
     return {
         points,
-        normals,
-        lengths
+        miterNormals, // mitter normals
+        lengths,
+        normals: normals.map(n => n.toArray())
     }
 }
 
 function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
-    const result = computeNormalAndLength(path, isClosed)
+    const result = computeNormalAndLength(path)
 
     const positions = []
     const indices = []
@@ -65,7 +58,7 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         // TODO: consider linecap
         const [x, y] = result.points[0]
         const [nx, ny] = result.normals[0]
-        const l = result.lengths[0]
+        const l = 1
         positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
     }
 
@@ -74,7 +67,7 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
 
     for (let i = lineJoinRange.left; i <= lineJoinRange.right; i++) {
         const [x, y] = result.points[i]
-        const [nx, ny] = result.normals[i]
+        const [nx, ny] = result.miterNormals[i]
         const l = result.lengths[i]
         positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
     }
@@ -84,8 +77,8 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         // TODO: consider linecap
         const idx = result.points.length - 1
         const [x, y] = result.points[idx]
-        const [nx, ny] = result.normals[idx]
-        const l = result.lengths[idx]
+        const [nx, ny] = result.normals[idx - 1] // NOTE: not use current normal, because this is the normal of edge between last point and first point. use previous instead
+        const l = 1
         positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
     }
 
