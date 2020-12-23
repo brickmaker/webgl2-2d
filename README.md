@@ -29,9 +29,9 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [ ] createLinearGradient(x0, y0, x1, y1) and addColorStop(pos, color)
         - [ ] createRadialGradient(x0, y0, r0, x1, y1, r1) and addColorStop(pos, color)
         - [ ] createPattern(image, repetition)
-    - [ ] Line caps and joins
+    - [x] Line caps and joins
         - [x] lineWidth
-        - [ ] lineCap
+        - [x] lineCap
         - [x] lineJoin
     - [ ] Shadows
         - [ ] shadowOffsetX
