@@ -5,6 +5,11 @@ function getVector2Normal(vec1, vec2) {
     return new Vector2(-vec.y, vec.x).normalize()
 }
 
+function normalize(vec) {
+    const len = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1])
+    return [vec[0] / len, vec[1] / len]
+}
+
 function mat4Multiply(mat1, mat2) {
     const m1 = new Matrix4().fromArray(mat1)
     const m2 = new Matrix4().fromArray(mat2)
@@ -53,7 +58,7 @@ function computeNormalAndLength(points) {
     }
 }
 
-function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
+function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin, lineCap) {
     const result = computeNormalAndLength(path)
 
     const positions = []
@@ -64,8 +69,20 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         // TODO: consider linecap
         const [x, y] = result.points[0]
         const [nx, ny] = result.normals[0]
-        const l = 1
-        positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+
+        if (lineCap === 'square') {
+            const [dirX, dirY] = normalize([result.points[1][0] - result.points[0][0], result.points[1][1] - result.points[0][1]])
+            positions.push(x - dirX * width / 2 + nx * width / 2, y - dirY * width / 2 + ny * width / 2, x - dirX * width / 2 - nx * width / 2, y - dirY * width / 2 - ny * width / 2)
+        } else if (lineCap === 'round') {
+            const startAngle = Math.atan2(-ny, -nx)
+            const endAngle = Math.atan2(ny, nx)
+            const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, true)
+            for (const [px, py] of arcPath) {
+                positions.push(px, py, x, y)
+            }
+        }
+
+        positions.push(x + nx * width / 2, y + ny * width / 2, x - nx * width / 2, y - ny * width / 2)
     }
 
     // don't need to consider first and last point if not isClosed
@@ -82,7 +99,7 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
             if (l < 0) {
                 positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - rawNormal1x * width / 2, y - rawNormal1y * width / 2)
 
-                const radius = width / 2;
+                // for round join
                 const startAngle = Math.atan2(-rawNormal1y, -rawNormal1x)
                 const endAngle = Math.atan2(-rawNormal2y, -rawNormal2x)
                 const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, false)
@@ -94,7 +111,7 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
             } else {
                 positions.push(x + rawNormal1x * width / 2, y + rawNormal1y * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
 
-                const radius = width / 2;
+                // for round join
                 const startAngle = Math.atan2(rawNormal1y, rawNormal1x)
                 const endAngle = Math.atan2(rawNormal2y, rawNormal2x)
                 const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, true)
@@ -115,8 +132,21 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         const idx = result.points.length - 1
         const [x, y] = result.points[idx]
         const [nx, ny] = result.normals[idx - 1] // NOTE: not use current normal, because this is the normal of edge between last point and first point. use previous instead
-        const l = 1
-        positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+
+        positions.push(x + nx * width / 2, y + ny * width / 2, x - nx * width / 2, y - ny * width / 2)
+
+        if (lineCap === 'square') {
+            const [dirX, dirY] = normalize([result.points[idx][0] - result.points[idx - 1][0], result.points[idx][1] - result.points[idx - 1][1]])
+            positions.push(x + dirX * width / 2 + nx * width / 2, y + dirY * width / 2 + ny * width / 2, x + dirX * width / 2 - nx * width / 2, y + dirY * width / 2 - ny * width / 2)
+        } else if (lineCap === 'round') {
+            const startAngle = Math.atan2(-ny, -nx)
+            const endAngle = Math.atan2(ny, nx)
+            const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, false)
+            for (const [px, py] of arcPath) {
+                positions.push(px, py, x, y)
+            }
+        }
+
     }
 
     for (let i = 0; i < (positions.length / 4 - 1); i++) { // divide by 4: get half num of nodes; minus 1, prevent tail if not closed
