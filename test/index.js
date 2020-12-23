@@ -206,6 +206,45 @@ function drawSimpleLineJoin(ctx) {
     ctx.stroke()
 }
 
+function drawLineCaps(ctx) {
+    ctx.strokeStyle = 'green'
+    ctx.beginPath()
+    ctx.moveTo(10, 50)
+    ctx.lineTo(200, 50)
+    ctx.moveTo(10, 100)
+    ctx.lineTo(200, 100)
+    ctx.stroke()
+
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 30
+
+    ctx.lineCap = 'butt'
+    ctx.beginPath()
+    ctx.moveTo(60, 50)
+    ctx.lineTo(60, 100)
+    ctx.stroke()
+
+    ctx.lineCap = 'round'
+    ctx.beginPath()
+    ctx.moveTo(110, 50)
+    ctx.lineTo(110, 100)
+    ctx.stroke()
+
+    ctx.lineCap = 'square'
+    ctx.beginPath()
+    ctx.moveTo(160, 50)
+    ctx.lineTo(160, 100)
+    ctx.stroke()
+
+    ctx.lineCap = 'round'
+    ctx.lineWidth = 20
+    ctx.beginPath()
+    ctx.moveTo(230, 50)
+    ctx.lineTo(270, 75)
+    ctx.lineTo(230, 100)
+    ctx.stroke()
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
@@ -214,5 +253,6 @@ function drawSimpleLineJoin(ctx) {
 // performDraw(drawWithTransform)
 // performDraw(saveAndRestore)
 // performDraw(pointInPath)
-performDraw(lineJoins)
+// performDraw(lineJoins)
 // performDraw(drawSimpleLineJoin)
+performDraw(drawLineCaps)
