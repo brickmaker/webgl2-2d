@@ -174,7 +174,6 @@ function lineJoins(ctx) {
 
     ctx.strokeStyle = 'black'
     ctx.lineWidth = 12
-    ctx.lineJoin = 'bevel'
     ctx.beginPath()
     ctx.moveTo(10, 75)
     ctx.lineTo(90, 100)
@@ -186,12 +185,24 @@ function lineJoins(ctx) {
 
     ctx.stroke()
 
+    ctx.lineJoin = 'round'
     ctx.beginPath()
     ctx.moveTo(210, 75)
     ctx.lineTo(250, 50)
     ctx.lineTo(250, 100)
     ctx.closePath()
 
+    ctx.stroke()
+}
+
+function drawSimpleLineJoin(ctx) {
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 20
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    ctx.moveTo(50, 50)
+    ctx.lineTo(100, 50)
+    ctx.lineTo(100, 100)
     ctx.stroke()
 }
 
@@ -204,3 +215,4 @@ function lineJoins(ctx) {
 // performDraw(saveAndRestore)
 // performDraw(pointInPath)
 performDraw(lineJoins)
+// performDraw(drawSimpleLineJoin)

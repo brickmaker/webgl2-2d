@@ -167,6 +167,39 @@ function pointInPath(ctx) {
 }
 
 
+function lineJoins(ctx) {
+    ctx.strokeStyle = 'green'
+    ctx.beginPath()
+    ctx.moveTo(10, 50)
+    ctx.lineTo(200, 50)
+    ctx.moveTo(10, 100)
+    ctx.lineTo(200, 100)
+    ctx.stroke()
+
+    ctx.strokeStyle = 'black'
+    ctx.lineWidth = 12
+    ctx.beginPath()
+    ctx.moveTo(10, 75)
+    ctx.lineTo(90, 100)
+    ctx.lineTo(130, 50)
+    ctx.lineTo(150, 100)
+    ctx.lineTo(160, 50)
+    ctx.lineTo(170, 100)
+    ctx.lineTo(180, 50)
+
+    ctx.stroke()
+
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    ctx.moveTo(210, 75)
+    ctx.lineTo(250, 50)
+    ctx.lineTo(250, 100)
+    ctx.closePath()
+
+    ctx.stroke()
+}
+
+
 performDraw(drawLine)
 performDraw(drawShape)
 performDraw(drawRect)
@@ -175,3 +208,4 @@ performDraw(drawCurve)
 performDraw(drawWithTransform)
 performDraw(saveAndRestore)
 performDraw(pointInPath)
+performDraw(lineJoins)

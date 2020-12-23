@@ -75,15 +75,33 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         const [x, y] = result.points[i]
         const [nx, ny] = result.miterNormals[i]
         const l = result.lengths[i]
-        if (lineJoin === 'bevel') {
+        if (lineJoin === 'bevel' | lineJoin === 'round') {
             let [rawNormal1x, rawNormal1y] = result.normals[(i + result.normals.length - 1) % result.normals.length]
             let [rawNormal2x, rawNormal2y] = result.normals[i]
             // NOTE: caution the draw order
             if (l < 0) {
                 positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - rawNormal1x * width / 2, y - rawNormal1y * width / 2)
+
+                const radius = width / 2;
+                const startAngle = Math.atan2(-rawNormal1y, -rawNormal1x)
+                const endAngle = Math.atan2(-rawNormal2y, -rawNormal2x)
+                const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, false)
+                for (const [px, py] of arcPath) {
+                    positions.push(x, y, px, py)
+                }
+
                 positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - rawNormal2x * width / 2, y - rawNormal2y * width / 2,)
             } else {
                 positions.push(x + rawNormal1x * width / 2, y + rawNormal1y * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+
+                const radius = width / 2;
+                const startAngle = Math.atan2(rawNormal1y, rawNormal1x)
+                const endAngle = Math.atan2(rawNormal2y, rawNormal2x)
+                const arcPath = createArc(x, y, width / 2, startAngle, endAngle, 30, true)
+                for (const [px, py] of arcPath) {
+                    positions.push(px, py, x, y)
+                }
+
                 positions.push(x + rawNormal2x * width / 2, y + rawNormal2y * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
             }
         } else {

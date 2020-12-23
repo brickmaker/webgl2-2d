@@ -32,7 +32,7 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
     - [ ] Line caps and joins
         - [x] lineWidth
         - [ ] lineCap
-        - [ ] lineJoin
+        - [x] lineJoin
     - [ ] Shadows
         - [ ] shadowOffsetX
         - [ ] shadowOffsetY
