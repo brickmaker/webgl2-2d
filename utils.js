@@ -35,8 +35,14 @@ function computeNormalAndLength(points) {
         const va = normals[(i - 1 + N) % N]
         const vb = normals[i % N]
         const normal = new Vector2().addVectors(va, vb).normalize()
-        miterNormals[i] = normal.toArray()
+
+        const edgeDir = new Vector2(points[(i + 1) % N][0] - points[i][0], points[(i + 1) % N][1] - points[i][1])
+        // keep mitter normal's direction outside
+        if (normal.dot(edgeDir) > 0) {
+            normal.negate()
+        }
         lengths[i] = 1 / normal.dot(va)
+        miterNormals[i] = normal.toArray()
     }
 
     return {
@@ -69,7 +75,20 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
         const [x, y] = result.points[i]
         const [nx, ny] = result.miterNormals[i]
         const l = result.lengths[i]
-        positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+        if (lineJoin === 'bevel') {
+            let [rawNormal1x, rawNormal1y] = result.normals[(i + result.normals.length - 1) % result.normals.length]
+            let [rawNormal2x, rawNormal2y] = result.normals[i]
+            // NOTE: caution the draw order
+            if (l < 0) {
+                positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - rawNormal1x * width / 2, y - rawNormal1y * width / 2)
+                positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - rawNormal2x * width / 2, y - rawNormal2y * width / 2,)
+            } else {
+                positions.push(x + rawNormal1x * width / 2, y + rawNormal1y * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+                positions.push(x + rawNormal2x * width / 2, y + rawNormal2y * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+            }
+        } else {
+            positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+        }
     }
 
     if (!isClosed) {

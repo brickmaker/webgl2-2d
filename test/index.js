@@ -185,6 +185,14 @@ function lineJoins(ctx) {
     ctx.lineTo(180, 50)
 
     ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(210, 75)
+    ctx.lineTo(250, 50)
+    ctx.lineTo(250, 100)
+    ctx.closePath()
+
+    ctx.stroke()
 }
 
 // performDraw(drawLine)
