@@ -98,10 +98,11 @@
             let positions = []
             let indices = []
             const width = this.ctx.lineWidth
+            const lineJoin = this.ctx.lineJoin
             for (const path of this.paths) {
                 if (path.length < 2) continue
                 const indexOffset = positions.length / 2 // index offset when combine all path's position and index, divided by 2: 2 term (x, y) mapping to 1 index
-                const pathData = getPathStrokeBufferData(path, width, path.closed, indexOffset)
+                const pathData = getPathStrokeBufferData(path, width, path.closed, indexOffset, lineJoin)
                 positions = positions.concat(pathData.positions)
                 indices = indices.concat(pathData.indices)
             }
@@ -162,6 +163,8 @@
             this.canvas = canvas
 
             this.lineWidth = 1
+            this.lineJoin = 'mitter'
+
             this._strokeStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
             this._fillStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }

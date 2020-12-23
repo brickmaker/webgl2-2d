@@ -54,26 +54,49 @@ function computeNormalAndLength(points, isClosed = false) {
     }
 }
 
-function getPathStrokeBufferData(path, width, isClosed = false, indexOffset = 0) {
+function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
     const result = computeNormalAndLength(path, isClosed)
 
     const positions = []
     const indices = []
 
-    for (let i = 0; i < path.length; i++) {
+    if (!isClosed) {
+        // begin Node
+        // TODO: consider linecap
+        const [x, y] = result.points[0]
+        const [nx, ny] = result.normals[0]
+        const l = result.lengths[0]
+        positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+    }
+
+    // don't need to consider first and last point if not isClosed
+    const lineJoinRange = isClosed ? { left: 0, right: result.points.length - 1 } : { left: 1, right: result.points.length - 2 }
+
+    for (let i = lineJoinRange.left; i <= lineJoinRange.right; i++) {
         const [x, y] = result.points[i]
         const [nx, ny] = result.normals[i]
         const l = result.lengths[i]
         positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
     }
-    for (let i = 0; i < path.length - 1; i++) {
+
+    if (!isClosed) {
+        // end Node
+        // TODO: consider linecap
+        const idx = result.points.length - 1
+        const [x, y] = result.points[idx]
+        const [nx, ny] = result.normals[idx]
+        const l = result.lengths[idx]
+        positions.push(x + nx * l * width / 2, y + ny * l * width / 2, x - nx * l * width / 2, y - ny * l * width / 2)
+    }
+
+    for (let i = 0; i < (positions.length / 4 - 1); i++) { // divide by 4: get half num of nodes; minus 1, prevent tail if not closed
         indices.push(indexOffset + 2 * i, indexOffset + 2 * i + 1, indexOffset + 2 * i + 2)
         indices.push(indexOffset + 2 * i + 1, indexOffset + 2 * i + 3, indexOffset + 2 * i + 2)
     }
 
     if (isClosed) {
-        indices.push(indexOffset + 2 * (path.length - 1), indexOffset + 2 * (path.length - 1) + 1, indexOffset)
-        indices.push(indexOffset + 2 * (path.length - 1) + 1, indexOffset + 1, indexOffset)
+        indices.push(indexOffset + positions.length - 2, indexOffset + positions.length - 1, indexOffset)
+        indices.push(indexOffset + positions.length - 1, indexOffset + 1, indexOffset)
     }
 
     return {
