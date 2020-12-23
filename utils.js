@@ -95,8 +95,8 @@ function getPathStrokeBufferData(path, width, isClosed, indexOffset, lineJoin) {
     }
 
     if (isClosed) {
-        indices.push(indexOffset + positions.length - 2, indexOffset + positions.length - 1, indexOffset)
-        indices.push(indexOffset + positions.length - 1, indexOffset + 1, indexOffset)
+        indices.push(indexOffset + positions.length / 2 - 2, indexOffset + positions.length / 2 - 1, indexOffset)
+        indices.push(indexOffset + positions.length / 2 - 1, indexOffset + 1, indexOffset)
     }
 
     return {
