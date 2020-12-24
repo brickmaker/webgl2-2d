@@ -132,7 +132,6 @@
     class WebGL2RenderingContext2D {
         constructor(canvas) {
             this._renderer = new Renderer(canvas)
-            this._scene = new THREE.Scene();
 
             this._width = canvas.width
             this._height = canvas.height
@@ -212,6 +211,14 @@
         stroke() {
             const { positions, indices } = this.path.getStrokeBufferData()
             this._draw(positions, indices, this._strokeStyle)
+        }
+
+        clip(path, fillStyle) {
+            // TODO: support specify path and fillStyle
+            // TODO: save/restore
+            this._renderer.prepareStencil()
+            this.fill()
+            this._renderer.useStencil()
         }
 
         rect(x, y, width, height) {

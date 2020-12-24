@@ -42,7 +42,7 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [x] fillRect
         - [x] strokeRect
         - [x] clearRect
-    - [ ] Paths
+    - [x] Paths
         - [x] beginPath()
         - [x] closePath()
         - [x] stroke()
@@ -54,7 +54,7 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [x] bezierCurveTo()
         - [x] arc()
         - [x] arcTo()
-        - [ ] clip()
+        - [x] clip() (TODO: not fully supported, bug exists with save/restore and multiple clip)
         - [x] isPointInPath() (TODO: specify path support)
     - [ ] Text
         - [ ] font

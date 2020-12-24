@@ -74,7 +74,8 @@ function createProgram(gl, vertShaderStr, fragShaderStr) {
 class Renderer {
     constructor(canvas) {
         this.gl = canvas.getContext('webgl2', {
-            preserveDrawingBuffer: true
+            preserveDrawingBuffer: true,
+            stencil: true
         })
         if (!this.gl) {
             console.error('WebGL2 not supported.')
@@ -147,6 +148,20 @@ class Renderer {
             0, 0, 0, 1,
         ]
         this.gl.uniformMatrix4fv(this.transformUniformLocation, false, this.transform)
+    }
+
+    prepareStencil() {
+        this.gl.colorMask(false, false, false, false);
+        this.gl.depthMask(false);
+        this.gl.enable(this.gl.STENCIL_TEST)
+        this.gl.stencilFunc(this.gl.ALWAYS, 1, 0xFF)
+        this.gl.stencilOp(this.gl.KEEP, this.gl.KEEP, this.gl.REPLACE)
+    }
+
+    useStencil() {
+        this.gl.colorMask(true, true, true, true);
+        this.gl.depthMask(true);
+        this.gl.stencilFunc(this.gl.EQUAL, 1, 0xFF)
     }
 
     setTransform(transform) {

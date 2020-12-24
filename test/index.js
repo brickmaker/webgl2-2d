@@ -256,6 +256,17 @@ function drawHeart(ctx) {
     ctx.bezierCurveTo(85, 25, 75, 37, 75, 40);
     ctx.clip()
 
+    /*
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(0, ctx.canvas.height)
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height)
+    ctx.lineTo(ctx.canvas.width, 0)
+    ctx.clip()
+
+    ctx.fillRect(10, 10, 100, 100)
+    */
+
     ctx.fillStyle = 'red'
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 }
