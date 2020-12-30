@@ -63,8 +63,8 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [ ] fillText()
         - [ ] strokeText()
         - [ ] measureText().width
-    - [ ] Drawing Images
-        - [ ] drawImage()
+    - [x] Drawing Images
+        - [x] drawImage()
     - [ ] Pixel manipulation
         - [ ] ImageData
         - [ ] createImageData()
