@@ -264,6 +264,17 @@ function drawHeart(ctx) {
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 }
 
+function drawImage(ctx) {
+    const image = new Image()
+    image.onload = () => {
+        // ctx.drawImage(image, 120, 20)
+        // ctx.drawImage(image, 120, 20, 80, 100)
+        ctx.drawImage(image, 100, 100, 400, 500, 120, 20, 80, 100)
+    }
+    image.src = '../images/liubei.jpg'
+}
+
+
 performDraw(drawLine)
 performDraw(drawShape)
 performDraw(drawRect)
@@ -275,3 +286,4 @@ performDraw(pointInPath)
 performDraw(lineJoins)
 performDraw(drawLineCaps)
 performDraw(drawHeart)
+performDraw(drawImage)

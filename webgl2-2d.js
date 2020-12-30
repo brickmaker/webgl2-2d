@@ -344,6 +344,18 @@
             return pointInPolygon(currPath, x, y, fillRule)
         }
 
+        drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
+            if (arguments.length === 3) {
+                this._renderer.drawImage(image, 0, 0, image.width, image.height, sx, sy, image.width, image.height)
+            } else if (arguments.length === 5) {
+                this._renderer.drawImage(image, 0, 0, image.width, image.height, sx, sy, sWidth, sHeight)
+            } else if (arguments.length === 9) {
+                this._renderer.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+            } else {
+                throw new Error('Invalid parameters')
+            }
+        }
+
 
         set fillStyle(color) {
             this._fillStyle = colorParser(color)
