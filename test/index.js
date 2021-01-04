@@ -281,6 +281,39 @@ function drawImage(ctx) {
     image.src = '../images/liubei.jpg'
 }
 
+function pixelManipulation(ctx) {
+
+    const printPixel = (imageData) => {
+        const { data, width, height } = imageData
+        const res = []
+        for (let i = 0; i < data.length; i += 4) {
+            res.push([data[i], data[i + 1], data[i + 2], data[i + 3]])
+        }
+        console.log(width, height)
+        console.log(res)
+    }
+
+    ctx.fillStyle = 'red'
+    ctx.fillRect(0, 0, 150, 75)
+    ctx.fillStyle = 'green'
+    ctx.fillRect(150, 0, 150, 75)
+    ctx.fillStyle = 'blue'
+    ctx.fillRect(0, 75, 150, 75)
+    ctx.fillStyle = 'cyan'
+    ctx.fillRect(150, 75, 150, 75)
+
+    const pixels1 = ctx.getImageData(10, 10, 1, 1)
+    const pixels2 = ctx.getImageData(160, 10, 1, 1)
+    const pixels3 = ctx.getImageData(0, 80, 1, 1)
+    const pixels4 = ctx.getImageData(160, 80, 1, 1)
+    const pixels5 = ctx.getImageData(148, 73, 4, 4)
+    printPixel(pixels1)
+    printPixel(pixels2)
+    printPixel(pixels3)
+    printPixel(pixels4)
+    printPixel(pixels5)
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
@@ -293,4 +326,5 @@ function drawImage(ctx) {
 // performDraw(drawSimpleLineJoin)
 // performDraw(drawLineCaps)
 // performDraw(drawHeart)
-performDraw(drawImage)
+// performDraw(drawImage)
+performDraw(pixelManipulation)

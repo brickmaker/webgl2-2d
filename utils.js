@@ -196,6 +196,9 @@ const COLOR_TABLE = {
     'red': [255, 0, 0, 1],
     'green': [0, 128, 0, 1],
     'blue': [0, 0, 255, 1],
+    'yellow': [255, 255, 0, 1],
+    'purple': [128, 0, 128, 1],
+    'cyan': [0, 255, 255, 1],
 }
 
 function colorParser(color) {
