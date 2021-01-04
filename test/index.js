@@ -294,24 +294,28 @@ function pixelManipulation(ctx) {
     }
 
     ctx.fillStyle = 'red'
-    ctx.fillRect(0, 0, 150, 75)
+    ctx.fillRect(0, 0, 100, 75)
     ctx.fillStyle = 'green'
-    ctx.fillRect(150, 0, 150, 75)
+    ctx.fillRect(100, 0, 100, 75)
     ctx.fillStyle = 'blue'
-    ctx.fillRect(0, 75, 150, 75)
+    ctx.fillRect(0, 75, 100, 75)
     ctx.fillStyle = 'cyan'
-    ctx.fillRect(150, 75, 150, 75)
+    ctx.fillRect(100, 75, 100, 75)
 
     const pixels1 = ctx.getImageData(10, 10, 1, 1)
-    const pixels2 = ctx.getImageData(160, 10, 1, 1)
+    const pixels2 = ctx.getImageData(120, 10, 1, 1)
     const pixels3 = ctx.getImageData(0, 80, 1, 1)
-    const pixels4 = ctx.getImageData(160, 80, 1, 1)
-    const pixels5 = ctx.getImageData(148, 73, 4, 4)
+    const pixels4 = ctx.getImageData(120, 80, 1, 1)
+    const pixels5 = ctx.getImageData(98, 73, 4, 4)
+    const pixels6 = ctx.getImageData(60, 45, 80, 60)
     printPixel(pixels1)
     printPixel(pixels2)
     printPixel(pixels3)
     printPixel(pixels4)
     printPixel(pixels5)
+
+    ctx.putImageData(pixels6, 210, 20)
+    ctx.putImageData(pixels6, 210, 90, 20, 10, 30, 40)
 }
 
 // performDraw(drawLine)

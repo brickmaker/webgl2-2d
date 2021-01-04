@@ -125,6 +125,14 @@ function createProgram(gl, vertShaderStr, fragShaderStr) {
     return program
 }
 
+function createTextureFromUint8Array(gl, array, type, width, height) {
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, type, width, height, 0, type, gl.UNSIGNED_BYTE, array);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    return texture;
+}
+
 //
 // Initialize a texture and load an image.
 // When the image finished loading copy it into the texture.
@@ -377,17 +385,7 @@ class Renderer {
         this.gl.drawElements(primitiveType, count, indexType, offset);
     }
 
-    drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
-
-        const vertices = [dx, dy, dx + dWidth, dy, dx + dWidth, dy + dHeight, dx, dy + dHeight]
-        const indices = [0, 1, 2, 0, 2, 3]
-        const x1 = sx / image.width
-        const x2 = (sx + sWidth) / image.width
-        const y1 = sy / image.height
-        const y2 = (sy + sHeight) / image.height
-        // const texCoords = [0, 0, 1, 0, 1, 1, 0, 1]
-        const texCoords = [x1, y1, x2, y1, x2, y2, x1, y2]
-
+    drawTexture(vertices, indices, texCoords, texture) {
         this.textureProgramInfo.setup(this)
 
         // Put a rectangle in the position buffer
@@ -412,8 +410,7 @@ class Renderer {
         );
 
         // bind textures
-        const textureInfo = createTextureInfo(this.gl, image)
-        this.gl.bindTexture(this.gl.TEXTURE_2D, textureInfo.texture);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
 
 
         // Draw the rectangle.
@@ -424,11 +421,26 @@ class Renderer {
         this.gl.drawElements(primitiveType, count, indexType, offset);
     }
 
+    drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
+
+        const x1 = sx / image.width
+        const x2 = (sx + sWidth) / image.width
+        const y1 = sy / image.height
+        const y2 = (sy + sHeight) / image.height
+        // const texCoords = [0, 0, 1, 0, 1, 1, 0, 1]
+        const texCoords = [x1, y1, x2, y1, x2, y2, x1, y2]
+        const vertices = [dx, dy, dx + dWidth, dy, dx + dWidth, dy + dHeight, dx, dy + dHeight]
+        const indices = [0, 1, 2, 0, 2, 3]
+        const textureInfo = createTextureInfo(this.gl, image)
+
+        this.drawTexture(vertices, indices, texCoords, textureInfo.texture)
+    }
+
     getImageData(x, y, w, h) {
         const data = new Uint8ClampedArray(w * h * 4);
         const flipY = this.gl.canvas.height - y - h
         this.gl.readPixels(x, flipY, w, h, this.gl.RGBA, this.gl.UNSIGNED_BYTE, data)
-        
+
         // flip upside down
         const flipData = new Uint8ClampedArray(w * h * 4);
         for (let r = 0; r < h; r++) {
@@ -439,5 +451,41 @@ class Renderer {
             width: w,
             height: h
         }
+    }
+
+    putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
+        let texture = null
+
+        const { data, width, height } = imageData
+        let dWidth = width
+        let dHeight = height
+
+        if (dirtyWidth && dirtyHeight) {
+            const array = new Uint8Array(dirtyWidth * dirtyHeight * 4)
+            for (let r = 0; r < Math.min(dirtyHeight, height - dirtyY); r++) {
+                const slice = data.subarray(((dirtyY + r) * width + dirtyX) * 4, ((dirtyY + r) * width + Math.min(width, dirtyX + dirtyWidth)) * 4)
+                const offset = r * dirtyWidth * 4
+                // console.log(r, slice, offset)
+                array.set(slice, offset)
+                // array.set(data.subarray(((dirtyY + r) * width + dirtyX) * 4), r * dirtyWidth * 4)
+            }
+            texture = createTextureFromUint8Array(this.gl, array, this.gl.RGBA, dirtyWidth, dirtyHeight)
+            dWidth = dirtyWidth
+            dHeight = dirtyHeight
+        } else {
+            texture = createTextureFromUint8Array(this.gl, data, this.gl.RGBA, width, height)
+        }
+
+        const texCoords = [0, 0, 1, 0, 1, 1, 0, 1]
+        const vertices = [dx, dy, dx + dWidth, dy, dx + dWidth, dy + dHeight, dx, dy + dHeight]
+        // NOTE: weird API
+        if (dirtyWidth && dirtyHeight) {
+            for (let i = 0; i < vertices.length; i += 2) {
+                vertices[i] += dirtyX
+                vertices[i + 1] += dirtyY
+            }
+        }
+        const indices = [0, 1, 2, 0, 2, 3]
+        this.drawTexture(vertices, indices, texCoords, texture)
     }
 }

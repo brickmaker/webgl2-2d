@@ -363,6 +363,10 @@
             return this._renderer.getImageData(sx, sy, sw, sh)
         }
 
+        putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
+            this._renderer.putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+        }
+
 
         set fillStyle(color) {
             this._fillStyle = colorParser(color)

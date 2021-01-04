@@ -66,8 +66,8 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
     - [x] Drawing Images
         - [x] drawImage()
     - [ ] Pixel manipulation
-        - [ ] ImageData
+        - [x] ImageData
         - [ ] createImageData()
-        - [ ] getImageData()
-        - [ ] putImageData()
+        - [x] getImageData()
+        - [x] putImageData()
     
