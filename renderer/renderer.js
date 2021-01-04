@@ -423,4 +423,21 @@ class Renderer {
         var indexType = this.gl.UNSIGNED_SHORT;
         this.gl.drawElements(primitiveType, count, indexType, offset);
     }
+
+    getImageData(x, y, w, h) {
+        const data = new Uint8ClampedArray(w * h * 4);
+        const flipY = this.gl.canvas.height - y - h
+        this.gl.readPixels(x, flipY, w, h, this.gl.RGBA, this.gl.UNSIGNED_BYTE, data)
+        
+        // flip upside down
+        const flipData = new Uint8ClampedArray(w * h * 4);
+        for (let r = 0; r < h; r++) {
+            flipData.set(data.subarray(r * w * 4, (r + 1) * w * 4), (h - r - 1) * w * 4)
+        }
+        return {
+            data: flipData,
+            width: w,
+            height: h
+        }
+    }
 }

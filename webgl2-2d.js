@@ -357,6 +357,13 @@
         }
 
 
+        // pixel manipulation
+
+        getImageData(sx, sy, sw, sh) {
+            return this._renderer.getImageData(sx, sy, sw, sh)
+        }
+
+
         set fillStyle(color) {
             this._fillStyle = colorParser(color)
         }
