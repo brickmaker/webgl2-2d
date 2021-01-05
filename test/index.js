@@ -315,7 +315,20 @@ function pixelManipulation(ctx) {
     printPixel(pixels5)
 
     ctx.putImageData(pixels6, 210, 20)
-    ctx.putImageData(pixels6, 210, 90, 20, 10, 30, 40)
+    ctx.putImageData(pixels6, 190, 90, 20, 10, 30, 40)
+
+    const pixels7 = ctx.createImageData(30, 40)
+
+    for (let r = 0; r < 40; r++) {
+        for (let c = 0; c < 30; c++) {
+            pixels7.data[(r * 30 + c) * 4] = 255 * (40 - r) / 40
+            pixels7.data[(r * 30 + c) * 4 + 1] = 255 * r / 40
+            pixels7.data[(r * 30 + c) * 4 + 2] = 0
+            pixels7.data[(r * 30 + c) * 4 + 3] = 255
+        }
+    }
+
+    ctx.putImageData(pixels7, 250, 90)
 }
 
 // performDraw(drawLine)

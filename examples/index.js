@@ -274,6 +274,55 @@ function drawImage(ctx) {
     image.src = '../images/liubei.jpg'
 }
 
+function pixelManipulation(ctx) {
+
+    const printPixel = (imageData) => {
+        const { data, width, height } = imageData
+        const res = []
+        for (let i = 0; i < data.length; i += 4) {
+            res.push([data[i], data[i + 1], data[i + 2], data[i + 3]])
+        }
+        console.log(width, height)
+        console.log(res)
+    }
+
+    ctx.fillStyle = 'red'
+    ctx.fillRect(0, 0, 100, 75)
+    ctx.fillStyle = 'green'
+    ctx.fillRect(100, 0, 100, 75)
+    ctx.fillStyle = 'blue'
+    ctx.fillRect(0, 75, 100, 75)
+    ctx.fillStyle = 'cyan'
+    ctx.fillRect(100, 75, 100, 75)
+
+    const pixels1 = ctx.getImageData(10, 10, 1, 1)
+    const pixels2 = ctx.getImageData(120, 10, 1, 1)
+    const pixels3 = ctx.getImageData(0, 80, 1, 1)
+    const pixels4 = ctx.getImageData(120, 80, 1, 1)
+    const pixels5 = ctx.getImageData(98, 73, 4, 4)
+    const pixels6 = ctx.getImageData(60, 45, 80, 60)
+    printPixel(pixels1)
+    printPixel(pixels2)
+    printPixel(pixels3)
+    printPixel(pixels4)
+    printPixel(pixels5)
+
+    ctx.putImageData(pixels6, 210, 20)
+    ctx.putImageData(pixels6, 190, 90, 20, 10, 30, 40)
+
+    const pixels7 = ctx.createImageData(30, 40)
+
+    for (let r = 0; r < 40; r++) {
+        for (let c = 0; c < 30; c++) {
+            pixels7.data[(r * 30 + c) * 4] = 255 * (40 - r) / 40
+            pixels7.data[(r * 30 + c) * 4 + 1] = 255 * r / 40
+            pixels7.data[(r * 30 + c) * 4 + 2] = 0
+            pixels7.data[(r * 30 + c) * 4 + 3] = 255
+        }
+    }
+
+    ctx.putImageData(pixels7, 250, 90)
+}
 
 performDraw(drawLine)
 performDraw(drawShape)
@@ -287,3 +336,4 @@ performDraw(lineJoins)
 performDraw(drawLineCaps)
 performDraw(drawHeart)
 performDraw(drawImage)
+performDraw(pixelManipulation)

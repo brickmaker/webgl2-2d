@@ -367,6 +367,19 @@
             this._renderer.putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
         }
 
+        createImageData(width, height) {
+            if (arguments.length === 1) {
+                const imageData = width
+                width = imageData.width
+                height = imagedata.height
+            }
+            return {
+                width,
+                height,
+                data: new Uint8ClampedArray(width * height * 4)
+            }
+        }
+
 
         set fillStyle(color) {
             this._fillStyle = colorParser(color)

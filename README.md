@@ -65,9 +65,9 @@ refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
         - [ ] measureText().width
     - [x] Drawing Images
         - [x] drawImage()
-    - [ ] Pixel manipulation
+    - [x] Pixel manipulation
         - [x] ImageData
-        - [ ] createImageData()
+        - [x] createImageData()
         - [x] getImageData()
         - [x] putImageData()
     
