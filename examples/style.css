@@ -2,10 +2,12 @@
   display: flex;
   max-width: 1400px;
   flex-wrap: wrap;
+  margin: auto;
 }
 
 .example-block {
   display: flex;
+  flex-direction: column;
   background-color: #e3f2fd;
   border-radius: 20px;
   margin: 15px;
@@ -14,7 +16,7 @@
 
 .example-block canvas {
   background-color: white;
-  border-radius: 5px;
+  border-radius: 8px;
   margin: 10px 10px 5px 10px;
 }
 
@@ -22,4 +24,44 @@
   text-align: center;
   font-size: 0.6em;
   margin: 0;
+}
+
+.description-block {
+  padding: 5px 10px 5px 10px;
+}
+
+.description-block .description-title {
+  font-weight: bold;
+}
+
+.description-block .description-content {
+  display: none;
+  font-size: 0.8em;
+  line-height: 1.2em;
+}
+
+.code {
+  display: inline;
+  color: #3f51b5;
+  /* background-color: #fcfcfc; */
+  padding: 3px;
+  /* position: relative; */
+  /* bottom: 1.5px; */
+  border-radius: 5px;
+}
+
+.head {
+  text-align: center;
+  margin-top: 40px;
+  /* font-weight: bold; */
+}
+
+.head h1 {
+  font-size: 3em;
+}
+
+.github-link {
+  /* background-color: #eeeeee; */
+  /* text-decoration: none; */
+  /* color: initial; */
 }

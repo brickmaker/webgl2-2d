@@ -1,8 +1,10 @@
-function createExample(draw) {
+function createExample(draw, title, apis) {
     const div = document.createElement('div')
 
     div.className = 'example-block'
 
+    const divMain = document.createElement('div')
+    divMain.style = 'display: flex;'
     const div2D = document.createElement('div')
     const divWebGL = document.createElement('div')
     const canvas2D = document.createElement('canvas')
@@ -18,8 +20,19 @@ function createExample(draw) {
     label.className = 'canvas-label'
     divWebGL.append(label)
 
-    div.append(div2D)
-    div.append(divWebGL)
+
+    divMain.append(div2D)
+    divMain.append(divWebGL)
+    div.append(divMain)
+    const description = document.createElement('div')
+    description.className = 'description-block'
+    description.innerHTML = `
+        <div class='description-title'>
+            ${title}: ${apis && apis.map(api => `<pre class='code'>${api}</pre>`).join(', ')}
+        </div>
+    `
+    // <p class='description-content'>${'description'}</>
+    div.append(description)
     document.querySelector('#examples').appendChild(div)
 
     const ctx2D = canvas2D.getContext('2d')
@@ -287,7 +300,7 @@ function drawImage(ctx) {
         // ctx.drawImage(image, 120, 20, 80, 100)
         ctx.drawImage(image, 100, 100, 400, 500, 120, 20, 80, 100)
     }
-    image.src = '../images/liubei.jpg'
+    image.src = '/images/liubei.jpg'
 }
 
 function pixelManipulation(ctx) {
@@ -340,16 +353,16 @@ function pixelManipulation(ctx) {
     ctx.putImageData(pixels7, 250, 90)
 }
 
-createExample(drawLine)
-createExample(drawShape)
-createExample(drawRect)
+createExample(drawLine, 'Basic Lines', ['moveTo()', 'lineTo()', 'stroke()'])
+createExample(drawShape, 'Shapes', ['lineTo()', 'fill()'])
+createExample(drawRect, 'Rectangles', ['fillRect()', 'clearRect()', 'strokeRect()'])
 // performDraw(drawPathRect)
-createExample(drawCurve)
-createExample(drawWithTransform)
-createExample(saveAndRestore)
-createExample(pointInPath)
-createExample(lineJoins)
-createExample(drawLineCaps)
-createExample(drawHeart)
-createExample(drawImage)
-createExample(pixelManipulation)
+createExample(drawCurve, 'Curves', ['arc()', 'arcTo()', 'bezierCurveTo()', 'quadraticCurveTo()'])
+createExample(drawWithTransform, 'Transforms', ['transform()', 'translate()', 'rotate()', 'scale()'])
+createExample(saveAndRestore, 'State', ['save()', 'restore()'])
+createExample(pointInPath, 'PointInPath', ['pointInPath()'])
+createExample(lineJoins, 'LineJoin', ['bevel', 'round', 'mitter'])
+createExample(drawLineCaps, 'LineCap', ['butt', 'round', 'square'])
+createExample(drawHeart, 'Clip space', ['clip()'])
+createExample(drawImage, 'Images', ['drawImage()'])
+createExample(pixelManipulation, 'Pixel manipulation', ['createImageData()', 'getImageData()', 'putImageData()'])
