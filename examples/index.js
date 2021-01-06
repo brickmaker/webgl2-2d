@@ -300,7 +300,7 @@ function drawImage(ctx) {
         // ctx.drawImage(image, 120, 20, 80, 100)
         ctx.drawImage(image, 100, 100, 400, 500, 120, 20, 80, 100)
     }
-    image.src = '/images/liubei.jpg'
+    image.src = './images/liubei.jpg'
 }
 
 function pixelManipulation(ctx) {
