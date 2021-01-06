@@ -1,10 +1,26 @@
-function performDraw(draw) {
+function createExample(draw) {
     const div = document.createElement('div')
+
+    div.className = 'example-block'
+
+    const div2D = document.createElement('div')
+    const divWebGL = document.createElement('div')
     const canvas2D = document.createElement('canvas')
     const canvasWebGL = document.createElement('canvas')
-    div.appendChild(canvas2D)
-    div.appendChild(canvasWebGL)
-    document.body.appendChild(div)
+    div2D.appendChild(canvas2D)
+    let label = document.createElement('p')
+    label.innerText = 'Canvas'
+    label.className = 'canvas-label'
+    div2D.append(label)
+    divWebGL.appendChild(canvasWebGL)
+    label = document.createElement('p')
+    label.innerText = 'WebGL'
+    label.className = 'canvas-label'
+    divWebGL.append(label)
+
+    div.append(div2D)
+    div.append(divWebGL)
+    document.querySelector('#examples').appendChild(div)
 
     const ctx2D = canvas2D.getContext('2d')
     const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
@@ -324,16 +340,16 @@ function pixelManipulation(ctx) {
     ctx.putImageData(pixels7, 250, 90)
 }
 
-performDraw(drawLine)
-performDraw(drawShape)
-performDraw(drawRect)
-performDraw(drawPathRect)
-performDraw(drawCurve)
-performDraw(drawWithTransform)
-performDraw(saveAndRestore)
-performDraw(pointInPath)
-performDraw(lineJoins)
-performDraw(drawLineCaps)
-performDraw(drawHeart)
-performDraw(drawImage)
-performDraw(pixelManipulation)
+createExample(drawLine)
+createExample(drawShape)
+createExample(drawRect)
+// performDraw(drawPathRect)
+createExample(drawCurve)
+createExample(drawWithTransform)
+createExample(saveAndRestore)
+createExample(pointInPath)
+createExample(lineJoins)
+createExample(drawLineCaps)
+createExample(drawHeart)
+createExample(drawImage)
+createExample(pixelManipulation)

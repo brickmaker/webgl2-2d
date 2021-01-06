@@ -4,7 +4,7 @@ const canvasWebGL = document.querySelector('#webgl')
 const ctx2D = canvas2D.getContext('2d')
 const ctxWebGL = canvasWebGL.getContext('webgl2-2d')
 
-function performDraw(draw) {
+function createExample(draw) {
     draw(ctx2D)
     draw(ctxWebGL)
 }
@@ -331,6 +331,27 @@ function pixelManipulation(ctx) {
     ctx.putImageData(pixels7, 250, 90)
 }
 
+function drawPattern(ctx) {
+    // Create a pattern, offscreen
+    const patternCanvas = document.createElement('canvas');
+    const patternContext = patternCanvas.getContext('2d');
+
+    // Give the pattern a width and height of 50
+    patternCanvas.width = 50;
+    patternCanvas.height = 50;
+
+    // Give the pattern a background color and draw an arc
+    patternContext.fillStyle = '#fec';
+    patternContext.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+    patternContext.arc(0, 0, 50, 0, .5 * Math.PI);
+    patternContext.stroke();
+
+    // Fill primary canvas with the pattern
+    const pattern = ctx.createPattern(patternCanvas, 'repeat');
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
@@ -344,4 +365,5 @@ function pixelManipulation(ctx) {
 // performDraw(drawLineCaps)
 // performDraw(drawHeart)
 // performDraw(drawImage)
-performDraw(pixelManipulation)
+// performDraw(pixelManipulation)
+createExample(drawPattern)

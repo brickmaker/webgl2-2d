@@ -1,0 +1,25 @@
+#examples {
+  display: flex;
+  max-width: 1400px;
+  flex-wrap: wrap;
+}
+
+.example-block {
+  display: flex;
+  background-color: #e3f2fd;
+  border-radius: 20px;
+  margin: 15px;
+  padding: 10px;
+}
+
+.example-block canvas {
+  background-color: white;
+  border-radius: 5px;
+  margin: 10px 10px 5px 10px;
+}
+
+.canvas-label {
+  text-align: center;
+  font-size: 0.6em;
+  margin: 0;
+}
