@@ -1,6 +1,13 @@
 # webgl2-2d
 Canvas API implementation in WebGL2
 
+## usage
+
+```js
+// const ctx = canvas.getContext('2d') // origin canvas 2D context
+const ctx = canvas.getContext('webgl2-2d') // WebGL2 implementation
+```
+
 ## checklist
 
 refer: http://bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
