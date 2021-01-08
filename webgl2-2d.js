@@ -129,6 +129,36 @@
         }
     }
 
+    class ImageData {
+        constructor(width, height, data) {
+            this.width = width
+            this.height = height
+            this.data = data
+
+            if (!this.data) {
+                this.data = new Uint8Array(width * height * 4)
+            }
+        }
+    }
+
+    class CanvasGradient {
+        constructor(type, x1, y1, x2, y2) {
+            this.type = type
+            this.x1 = x1
+            this.y1 = y1
+            this.x2 = x2
+            this.y2 = y2
+            this.stops = []
+        }
+
+        addColorStop(offset, color) {
+            this.stops.push({
+                offset,
+                color: colorParser(color)
+            })
+        }
+    }
+
     class WebGL2RenderingContext2D {
         constructor(canvas) {
             this._renderer = new Renderer(canvas)
@@ -170,8 +200,67 @@
             this._fillStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
+        _createGradientImageData(gradient, width, height) {
+            // TODO: bad implementation
+            const imageData = new ImageData(width, height)
+            const { x1, x2, y1, y2 } = gradient
+            const normal = normalize([x2 - x1, y2 - y1])
+            // const dirX = x2 - x1
+            // const dirY = y2 - y1
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            const tableLen = parseInt(Math.sqrt(width ** 2 + height ** 2))
+            const colorTable = new Array(tableLen).fill(0)
+            gradient.stops.sort((a, b) => {
+                return a.offset - b.offset
+            })
+            for (let i = 0; i < gradient.stops.length - 1; i++) {
+                const grad1 = gradient.stops[i]
+                const grad2 = gradient.stops[i + 1]
+                for (let p = parseInt((grad1.offset * tableLen)); p <= parseInt((grad2.offset * tableLen)); p++) {
+                    const k = p / ((grad2.offset - grad1.offset) * tableLen)
+                    colorTable[p] = lerpColor(grad1.color, grad2.color, k)
+                }
+            }
+            for (let r = 0; r < height; r++) {
+                for (let c = 0; c < width; c++) {
+                    if (c == 50 || c == 100) {
+                        console.log(r, c)
+                    }
+                    // translate
+                    let xx = c - x1
+                    let yy = r - y1
+                    // rotate
+                    // let xxx = dirX * xx + dirY * yy
+                    let xxx = normal[0] * xx + normal[1] * yy
+                    // let yyy = -normal[1] * xx + normal[0] * yy
+                    // scale
+                    xxx /= length
+
+                    const colorTableIdx = Math.min(Math.max(parseInt(xxx * tableLen), 0), tableLen - 1);
+
+                    imageData.data[(r * width + c) * 4] = colorTable[colorTableIdx].r * 255
+                    imageData.data[(r * width + c) * 4 + 1] = colorTable[colorTableIdx].g * 255
+                    imageData.data[(r * width + c) * 4 + 2] = colorTable[colorTableIdx].b * 255
+                    imageData.data[(r * width + c) * 4 + 3] = colorTable[colorTableIdx].a * 255
+                }
+            }
+            return imageData
+        }
+
         _draw(positions, indices, fillStyle) {
-            this._renderer.draw(positions, indices, [fillStyle.r, fillStyle.g, fillStyle.b, fillStyle.a])
+            if (fillStyle instanceof CanvasGradient) {
+                // TODO: maybe not work with transform?
+                const texCoords = [0, 0, 1, 0, 1, 1, 0, 1] // full canvas
+                const imageData = this._createGradientImageData(fillStyle, this._width, this._height)
+                this._renderer.drawTexture(
+                    positions,
+                    indices,
+                    texCoords,
+                    createTextureFromUint8Array(this._renderer.gl, imageData.data, this._renderer.gl.RGBA, this._width, this._height)
+                )
+            } else {
+                this._renderer.draw(positions, indices, [fillStyle.r, fillStyle.g, fillStyle.b, fillStyle.a])
+            }
         }
 
         // API
@@ -380,9 +469,19 @@
             }
         }
 
+        // gradient
 
-        set fillStyle(color) {
-            this._fillStyle = colorParser(color)
+        createLinearGradient(x1, y1, x2, y2) {
+            return new CanvasGradient('linear', x1, y1, x2, y2)
+        }
+
+
+        set fillStyle(style) {
+            if (style instanceof CanvasGradient) {
+                this._fillStyle = style
+            } else {
+                this._fillStyle = colorParser(style)
+            }
         }
 
         get fillStyle() {
@@ -390,8 +489,12 @@
             return this._fillStyle
         }
 
-        set strokeStyle(color) {
-            this._strokeStyle = colorParser(color)
+        set strokeStyle(style) {
+            if (style instanceof CanvasGradient) {
+                this._strokeStyle = style
+            } else {
+                this._strokeStyle = colorParser(style)
+            }
         }
 
         get strokeStyle() {

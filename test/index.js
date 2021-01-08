@@ -362,13 +362,15 @@ function drawText(ctx) {
 }
 
 function drawGradient(ctx) {
-    const gradient = ctx.createLinearGradient(10, 10, 200, 100)
+    // const gradient = ctx.createLinearGradient(0, 0, 100, 100)
+    const gradient = ctx.createLinearGradient(0, 0, 100, 0)
     gradient.addColorStop(0, 'red')
-    gradient.addColorStop(0.5, 'green')
+    // gradient.addColorStop(0.5, 'green')
     gradient.addColorStop(1, 'blue')
 
     ctx.fillStyle = gradient
-    ctx.fillRect(20, 20, 150, 110)
+    // ctx.fillRect(20, 20, 150, 110)
+    ctx.fillRect(0, 0, 150, 150)
 }
 
 // performDraw(drawLine)

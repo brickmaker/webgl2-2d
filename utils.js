@@ -16,6 +16,15 @@ function mat4Multiply(mat1, mat2) {
     return m1.multiply(m2).elements
 }
 
+function lerpColor(color1, color2, t) {
+    return {
+        r: (1 - t) * color1.r + t * color2.r,
+        g: (1 - t) * color1.g + t * color2.g,
+        b: (1 - t) * color1.b + t * color2.b,
+        a: (1 - t) * color1.a + t * color2.a
+    }
+}
+
 function computeNormalAndLength(points) {
     if (!points || points.lengths < 2) {
         return {
