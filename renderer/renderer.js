@@ -356,7 +356,7 @@ class Renderer {
         this.gl.uniformMatrix4fv(this.currentProgramInfo.uniforms.transform, false, this.transform)
     }
 
-    draw(vertices, indices, color) {
+    draw(vertices, indices, fillStyle) {
 
         this.simpleProgramInfo.setup(this)
 
@@ -375,7 +375,7 @@ class Renderer {
             this.gl.STATIC_DRAW
         );
 
-        this.gl.uniform4fv(this.currentProgramInfo.uniforms.color, new Float32Array(color));
+        this.gl.uniform4fv(this.currentProgramInfo.uniforms.color, new Float32Array(fillStyle));
 
         // Draw the rectangle.
         var primitiveType = this.gl.TRIANGLES;

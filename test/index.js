@@ -332,6 +332,7 @@ function pixelManipulation(ctx) {
 }
 
 function drawPattern(ctx) {
+    // TODO: ..
     // Create a pattern, offscreen
     const patternCanvas = document.createElement('canvas');
     const patternContext = patternCanvas.getContext('2d');
@@ -352,6 +353,24 @@ function drawPattern(ctx) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function drawText(ctx) {
+    // TODO: ..
+    ctx.beginPath()
+    ctx.arc(75, 75, 50, 0, Math.PI * 2, false)
+    ctx.arc(75, 75, 20, 0, Math.PI * 2, true)
+    ctx.fill()
+}
+
+function drawGradient(ctx) {
+    const gradient = ctx.createLinearGradient(10, 10, 200, 100)
+    gradient.addColorStop(0, 'red')
+    gradient.addColorStop(0.5, 'green')
+    gradient.addColorStop(1, 'blue')
+
+    ctx.fillStyle = gradient
+    ctx.fillRect(20, 20, 150, 110)
+}
+
 // performDraw(drawLine)
 // performDraw(drawShape)
 // performDraw(drawRect)
@@ -366,4 +385,27 @@ function drawPattern(ctx) {
 // performDraw(drawHeart)
 // performDraw(drawImage)
 // performDraw(pixelManipulation)
-createExample(drawPattern)
+// createExample(drawPattern)
+// createExample(drawText)
+createExample(drawGradient)
+
+/*
+let path
+
+opentype.load('../fonts/Roboto-Black.ttf', function(err, font) {
+    if (err) {
+        alert('Font could not be loaded: ' + err);
+    } else {
+        // Now let's display it on a canvas with id "canvas"
+        const ctx = document.getElementById('canvas').getContext('2d');
+
+        // Construct a Path object containing the letter shapes of the given text.
+        // The other parameters are x, y and fontSize.
+        // Note that y is the position of the baseline.
+        path = font.getPath('Hello, World!', 0, 150, 72);
+        console.log(path)
+        // If you just want to draw the text you can also use font.draw(ctx, text, x, y, fontSize).
+        path.draw(ctx);
+    }
+});
+*/

@@ -170,8 +170,8 @@
             this._fillStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
-        _draw(positions, indices, color) {
-            this._renderer.draw(positions, indices, [color.r, color.g, color.b, color.a])
+        _draw(positions, indices, fillStyle) {
+            this._renderer.draw(positions, indices, [fillStyle.r, fillStyle.g, fillStyle.b, fillStyle.a])
         }
 
         // API
