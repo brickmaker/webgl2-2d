@@ -365,21 +365,21 @@ function drawGradient(ctx) {
     // const gradient = ctx.createLinearGradient(0, 0, 100, 100)
     const linearGradient = ctx.createLinearGradient(20, 0, 120, 0)
     linearGradient.addColorStop(0, 'red')
-    linearGradient.addColorStop(0.5, 'green')
+    linearGradient.addColorStop(0.5, 'purple')
     linearGradient.addColorStop(1, 'blue')
 
-    const radialGradient = ctx.createRadialGradient(230, 75, 10, 280, 75, 30)
+    const radialGradient = ctx.createRadialGradient(200, 50, 5, 220, 80, 100)
     radialGradient.addColorStop(0, 'red')
-    radialGradient.addColorStop(0.5, 'green')
-    radialGradient.addColorStop(1, 'blue')
+    radialGradient.addColorStop(0.3, 'blue')
+    radialGradient.addColorStop(1, 'white')
 
     ctx.fillStyle = linearGradient
     ctx.beginPath()
     ctx.arc(70, 75, 50, 0, Math.PI * 2, false)
     ctx.fill()
 
-    // ctx.fillStyle = radialGradient
-    // ctx.fillRect(180, 20, 230, 120)
+    ctx.fillStyle = radialGradient
+    ctx.fillRect(170, 40, 230, 80)
 
     // ctx.fillRect(20, 20, 150, 100)
     // ctx.fillRect(0, 0, 150, 100)
