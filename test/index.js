@@ -363,14 +363,27 @@ function drawText(ctx) {
 
 function drawGradient(ctx) {
     // const gradient = ctx.createLinearGradient(0, 0, 100, 100)
-    const gradient = ctx.createLinearGradient(0, 0, 100, 0)
-    gradient.addColorStop(0, 'red')
-    // gradient.addColorStop(0.5, 'green')
-    gradient.addColorStop(1, 'blue')
+    const linearGradient = ctx.createLinearGradient(20, 0, 120, 0)
+    linearGradient.addColorStop(0, 'red')
+    linearGradient.addColorStop(0.5, 'green')
+    linearGradient.addColorStop(1, 'blue')
 
-    ctx.fillStyle = gradient
-    // ctx.fillRect(20, 20, 150, 110)
-    ctx.fillRect(0, 0, 150, 150)
+    const radialGradient = ctx.createRadialGradient(230, 75, 10, 280, 75, 30)
+    radialGradient.addColorStop(0, 'red')
+    radialGradient.addColorStop(0.5, 'green')
+    radialGradient.addColorStop(1, 'blue')
+
+    ctx.fillStyle = linearGradient
+    ctx.beginPath()
+    ctx.arc(70, 75, 50, 0, Math.PI * 2, false)
+    ctx.fill()
+
+    // ctx.fillStyle = radialGradient
+    // ctx.fillRect(180, 20, 230, 120)
+
+    // ctx.fillRect(20, 20, 150, 100)
+    // ctx.fillRect(0, 0, 150, 100)
+    // ctx.fillRect(100, 0, 200, 100)
 }
 
 // performDraw(drawLine)

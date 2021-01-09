@@ -200,8 +200,12 @@
             this._fillStyle = { r: 0, g: 0, b: 0, a: 1 } // setter&getter
         }
 
+        _createGradientTexture(gradient, width, height) {
+            // TODO: ...
+        }
+
         _createGradientImageData(gradient, width, height) {
-            // TODO: bad implementation
+            // TODO: bad implementation, create texture instead
             const imageData = new ImageData(width, height)
             const { x1, x2, y1, y2 } = gradient
             const normal = normalize([x2 - x1, y2 - y1])
@@ -217,15 +221,12 @@
                 const grad1 = gradient.stops[i]
                 const grad2 = gradient.stops[i + 1]
                 for (let p = parseInt((grad1.offset * tableLen)); p <= parseInt((grad2.offset * tableLen)); p++) {
-                    const k = p / ((grad2.offset - grad1.offset) * tableLen)
+                    const k = (p - parseInt((grad1.offset * tableLen))) / ((grad2.offset - grad1.offset) * tableLen)
                     colorTable[p] = lerpColor(grad1.color, grad2.color, k)
                 }
             }
             for (let r = 0; r < height; r++) {
                 for (let c = 0; c < width; c++) {
-                    if (c == 50 || c == 100) {
-                        console.log(r, c)
-                    }
                     // translate
                     let xx = c - x1
                     let yy = r - y1
@@ -238,10 +239,10 @@
 
                     const colorTableIdx = Math.min(Math.max(parseInt(xxx * tableLen), 0), tableLen - 1);
 
-                    imageData.data[(r * width + c) * 4] = colorTable[colorTableIdx].r * 255
-                    imageData.data[(r * width + c) * 4 + 1] = colorTable[colorTableIdx].g * 255
-                    imageData.data[(r * width + c) * 4 + 2] = colorTable[colorTableIdx].b * 255
-                    imageData.data[(r * width + c) * 4 + 3] = colorTable[colorTableIdx].a * 255
+                    imageData.data[(r * width + c) * 4] = parseInt(colorTable[colorTableIdx].r * 255)
+                    imageData.data[(r * width + c) * 4 + 1] = parseInt(colorTable[colorTableIdx].g * 255)
+                    imageData.data[(r * width + c) * 4 + 2] = parseInt(colorTable[colorTableIdx].b * 255)
+                    imageData.data[(r * width + c) * 4 + 3] = parseInt(colorTable[colorTableIdx].a * 255)
                 }
             }
             return imageData
@@ -250,7 +251,9 @@
         _draw(positions, indices, fillStyle) {
             if (fillStyle instanceof CanvasGradient) {
                 // TODO: maybe not work with transform?
-                const texCoords = [0, 0, 1, 0, 1, 1, 0, 1] // full canvas
+                const texCoords = positions.map((v, i) => {
+                    return i % 2 == 0 ? v / this._width : v / this._height
+                })
                 const imageData = this._createGradientImageData(fillStyle, this._width, this._height)
                 this._renderer.drawTexture(
                     positions,
