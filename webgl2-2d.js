@@ -142,12 +142,7 @@
     }
 
     class CanvasGradient {
-        constructor(type, x1, y1, x2, y2) {
-            this.type = type
-            this.x1 = x1
-            this.y1 = y1
-            this.x2 = x2
-            this.y2 = y2
+        constructor() {
             this.stops = []
         }
 
@@ -156,6 +151,78 @@
                 offset,
                 color: colorParser(color)
             })
+        }
+        imageData(width, height) { }
+    }
+
+    class CanvasLinearGradient extends CanvasGradient {
+        constructor(x1, y1, x2, y2) {
+            super()
+            this.x1 = x1
+            this.y1 = y1
+            this.x2 = x2
+            this.y2 = y2
+        }
+
+        imageData(width, height) {
+            const imageData = new ImageData(width, height)
+            const [x1, x2, y1, y2] = [this.x1, this.x2, this.y1, this.y2]
+            const normal = normalize([x2 - x1, y2 - y1])
+            // const dirX = x2 - x1
+            // const dirY = y2 - y1
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            const tableLen = parseInt(Math.sqrt(width ** 2 + height ** 2))
+            const colorTable = new Array(tableLen).fill(0)
+            this.stops.sort((a, b) => {
+                return a.offset - b.offset
+            })
+            for (let i = 0; i < this.stops.length - 1; i++) {
+                const grad1 = this.stops[i]
+                const grad2 = this.stops[i + 1]
+                for (let p = parseInt((grad1.offset * tableLen)); p <= parseInt((grad2.offset * tableLen)); p++) {
+                    const k = (p - parseInt((grad1.offset * tableLen))) / ((grad2.offset - grad1.offset) * tableLen)
+                    colorTable[p] = lerpColor(grad1.color, grad2.color, k)
+                }
+            }
+            for (let r = 0; r < height; r++) {
+                for (let c = 0; c < width; c++) {
+                    // translate
+                    let xx = c - x1
+                    let yy = r - y1
+                    // rotate
+                    // let xxx = dirX * xx + dirY * yy
+                    let xxx = normal[0] * xx + normal[1] * yy
+                    // let yyy = -normal[1] * xx + normal[0] * yy
+                    // scale
+                    xxx /= length
+
+                    const colorTableIdx = Math.min(Math.max(parseInt(xxx * tableLen), 0), tableLen - 1);
+
+                    imageData.data[(r * width + c) * 4] = parseInt(colorTable[colorTableIdx].r * 255)
+                    imageData.data[(r * width + c) * 4 + 1] = parseInt(colorTable[colorTableIdx].g * 255)
+                    imageData.data[(r * width + c) * 4 + 2] = parseInt(colorTable[colorTableIdx].b * 255)
+                    imageData.data[(r * width + c) * 4 + 3] = parseInt(colorTable[colorTableIdx].a * 255)
+                }
+            }
+            return imageData
+        }
+    }
+
+    class CanvasRadialGradient extends CanvasGradient {
+        constructor(x1, y1, r1, x2, y2, r2) {
+            super()
+            this.x1 = x1
+            this.y1 = y1
+            this.r1 = r1
+            this.x2 = x2
+            this.y2 = y2
+            this.r2 = r2
+        }
+
+        imageData(width, height) {
+            // TODO: ...
+            const imageData = new ImageData(width, height)
+            const [x1, y1, r1, x2, y2, r2] = [this.x1, this.y1, this.r1, this.x2, this.y2, this.r2]
         }
     }
 
@@ -206,46 +273,50 @@
 
         _createGradientImageData(gradient, width, height) {
             // TODO: bad implementation, create texture instead
-            const imageData = new ImageData(width, height)
-            const { x1, x2, y1, y2 } = gradient
-            const normal = normalize([x2 - x1, y2 - y1])
-            // const dirX = x2 - x1
-            // const dirY = y2 - y1
-            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            const tableLen = parseInt(Math.sqrt(width ** 2 + height ** 2))
-            const colorTable = new Array(tableLen).fill(0)
-            gradient.stops.sort((a, b) => {
-                return a.offset - b.offset
-            })
-            for (let i = 0; i < gradient.stops.length - 1; i++) {
-                const grad1 = gradient.stops[i]
-                const grad2 = gradient.stops[i + 1]
-                for (let p = parseInt((grad1.offset * tableLen)); p <= parseInt((grad2.offset * tableLen)); p++) {
-                    const k = (p - parseInt((grad1.offset * tableLen))) / ((grad2.offset - grad1.offset) * tableLen)
-                    colorTable[p] = lerpColor(grad1.color, grad2.color, k)
+            // TODO: need refactor
+            if (gradient.type === 'linear') {
+            } else if (gradient.type === 'radial') {
+                const imageData = new ImageData(width, height)
+                const { x1, x2, y1, y2 } = gradient
+                const normal = normalize([x2 - x1, y2 - y1])
+                // const dirX = x2 - x1
+                // const dirY = y2 - y1
+                const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+                const tableLen = parseInt(Math.sqrt(width ** 2 + height ** 2))
+                const colorTable = new Array(tableLen).fill(0)
+                gradient.stops.sort((a, b) => {
+                    return a.offset - b.offset
+                })
+                for (let i = 0; i < gradient.stops.length - 1; i++) {
+                    const grad1 = gradient.stops[i]
+                    const grad2 = gradient.stops[i + 1]
+                    for (let p = parseInt((grad1.offset * tableLen)); p <= parseInt((grad2.offset * tableLen)); p++) {
+                        const k = (p - parseInt((grad1.offset * tableLen))) / ((grad2.offset - grad1.offset) * tableLen)
+                        colorTable[p] = lerpColor(grad1.color, grad2.color, k)
+                    }
                 }
-            }
-            for (let r = 0; r < height; r++) {
-                for (let c = 0; c < width; c++) {
-                    // translate
-                    let xx = c - x1
-                    let yy = r - y1
-                    // rotate
-                    // let xxx = dirX * xx + dirY * yy
-                    let xxx = normal[0] * xx + normal[1] * yy
-                    // let yyy = -normal[1] * xx + normal[0] * yy
-                    // scale
-                    xxx /= length
+                for (let r = 0; r < height; r++) {
+                    for (let c = 0; c < width; c++) {
+                        // translate
+                        let xx = c - x1
+                        let yy = r - y1
+                        // rotate
+                        // let xxx = dirX * xx + dirY * yy
+                        let xxx = normal[0] * xx + normal[1] * yy
+                        // let yyy = -normal[1] * xx + normal[0] * yy
+                        // scale
+                        xxx /= length
 
-                    const colorTableIdx = Math.min(Math.max(parseInt(xxx * tableLen), 0), tableLen - 1);
+                        const colorTableIdx = Math.min(Math.max(parseInt(xxx * tableLen), 0), tableLen - 1);
 
-                    imageData.data[(r * width + c) * 4] = parseInt(colorTable[colorTableIdx].r * 255)
-                    imageData.data[(r * width + c) * 4 + 1] = parseInt(colorTable[colorTableIdx].g * 255)
-                    imageData.data[(r * width + c) * 4 + 2] = parseInt(colorTable[colorTableIdx].b * 255)
-                    imageData.data[(r * width + c) * 4 + 3] = parseInt(colorTable[colorTableIdx].a * 255)
+                        imageData.data[(r * width + c) * 4] = parseInt(colorTable[colorTableIdx].r * 255)
+                        imageData.data[(r * width + c) * 4 + 1] = parseInt(colorTable[colorTableIdx].g * 255)
+                        imageData.data[(r * width + c) * 4 + 2] = parseInt(colorTable[colorTableIdx].b * 255)
+                        imageData.data[(r * width + c) * 4 + 3] = parseInt(colorTable[colorTableIdx].a * 255)
+                    }
                 }
+                return imageData
             }
-            return imageData
         }
 
         _draw(positions, indices, fillStyle) {
@@ -254,7 +325,8 @@
                 const texCoords = positions.map((v, i) => {
                     return i % 2 == 0 ? v / this._width : v / this._height
                 })
-                const imageData = this._createGradientImageData(fillStyle, this._width, this._height)
+                // const imageData = this._createGradientImageData(fillStyle, this._width, this._height)
+                const imageData = fillStyle.imageData(this._width, this._height)
                 this._renderer.drawTexture(
                     positions,
                     indices,
@@ -388,11 +460,11 @@
         // save & restore states
         /*
             Each context maintains a stack of drawing states. Drawing states consist of:
-
+    
             * The current transformation matrix.
             * The current clipping region.
             * The current values of the following attributes: strokeStyle, fillStyle, globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, globalCompositeOperation, font, textAlign, textBaseline.
-
+    
             The current path and the current bitmap are not part of the drawing state. The current path is persistent, and can only be reset using the beginPath() method. The current bitmap is a property of the canvas, not the context.
         */
 
@@ -475,7 +547,11 @@
         // gradient
 
         createLinearGradient(x1, y1, x2, y2) {
-            return new CanvasGradient('linear', x1, y1, x2, y2)
+            return new CanvasLinearGradient(x1, y1, x2, y2)
+        }
+
+        createRadialGradient(x1, y1, r1, x2, y2, r2) {
+            return new CanvasRadialGradient(x1, y1, r1, x2, y2, r2)
         }
 
 
